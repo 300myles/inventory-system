@@ -109,7 +109,7 @@ export default function Dashboard() {
               <span className="font-medium">Sistema Online</span>
             </div>
             <div className="text-amber-100">|</div>
-            <div className="text-sm">Última sincronização: {new Date().toLocaleTimeString("pt-BR")}</div>
+            <div className="text-sm">Última sincronização: {new Date().toLocaleTimeString("en-US")}</div>
             <div className="text-amber-100">|</div>
             <div className="text-sm">
               Vendas hoje: R$ {todayStats.vendas.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
