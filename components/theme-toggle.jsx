@@ -13,7 +13,7 @@ export function ThemeToggle() {
       size="sm"
       onClick={toggleTheme}
       className={`
-        relative overflow-hidden transition-all duration-300 ease-in-out
+        relative overflow-hidden transition-all hover:cursor-pointer duration-300 ease-in-out
         ${
           theme === "dark"
             ? "border-gray-700 hover:bg-gray-800 text-gray-200 bg-gray-900"
@@ -25,12 +25,12 @@ export function ThemeToggle() {
         {theme === "dark" ? (
           <>
             <Sun className="h-4 w-4 text-yellow-500" />
-            <span className="text-sm font-medium">Modo Claro</span>
+            <span className="text-sm font-medium">Light Mode</span>
           </>
         ) : (
           <>
             <Moon className="h-4 w-4 text-blue-600" />
-            <span className="text-sm font-medium">Modo Noturno</span>
+            <span className="text-sm font-medium">Dark Mode</span>
           </>
         )}
       </div>

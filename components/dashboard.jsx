@@ -15,6 +15,9 @@ import {
   BarChart,
   CheckCircle,
   Calendar,
+  HomeIcon,
+  ArrowRight,
+  ArrowUpRight,
 } from "lucide-react"
 import { useInventory } from "@/contexts/inventory-context"
 import { useTheme } from "@/contexts/theme-context"
@@ -30,12 +33,12 @@ export default function Dashboard() {
   const totalItems = inventory.reduce((sum, item) => sum + item.currentStock, 0)
   const unreadNotifications = notifications.filter((n) => !n.read).length
 
-  // Dados práticos e diretos
+  // Stats for the day
   const todayStats = {
-    vendas: 2847.5,
-    pedidos: 12,
-    clientes: 89,
-    crescimento: 15.2,
+    Sales: 2847.5,
+    Orders: 12,
+    Customers: 89,
+    Growth: 15.2,
   }
 
   // Itens mais vendidos (dados simplificados)
@@ -101,22 +104,27 @@ export default function Dashboard() {
   return (
     <div className="space-y-6">
       {/* Barra de Status em Tempo Real */}
-      <div className="bg-gradient-to-r from-amber-600 to-amber-700 rounded-lg p-4 text-white">
+      <div className="bg-gradient-to-r from-blue-900 to-blue-700 rounded-lg p-4 text-white">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-6">
             <div className="flex items-center space-x-2">
               <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-              <span className="font-medium">Sistema Online</span>
+              <span className="font-medium">System Online</span>
             </div>
             <div className="text-amber-100">|</div>
-            <div className="text-sm">Última sincronização: {new Date().toLocaleTimeString("en-US")}</div>
+            <div className="text-sm">
+              Last Updated: 3:15am <br /> Aug 23, 2025{" "}
+            </div>
             <div className="text-amber-100">|</div>
             <div className="text-sm">
-              Vendas hoje: R$ {todayStats.vendas.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+              Total Sales Today: ${" "}
+              {todayStats.Sales.toLocaleString("pt-BR", {
+                minimumFractionDigits: 2,
+              })}
             </div>
           </div>
           <div className="flex items-center space-x-4 text-sm">
-            <span>Usuários ativos: 3</span>
+            <span>Active Users: 3</span>
             <span>•</span>
             <span>Uptime: 99.9%</span>
           </div>
@@ -127,19 +135,46 @@ export default function Dashboard() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card className={cardClass}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className={`text-sm font-medium ${textPrimary}`}>Valor Total do Inventário</CardTitle>
+            <CardTitle className={`text-sm font-medium ${textPrimary}`}>
+              Items in Stock
+            </CardTitle>
+            <Package className="h-4 w-4 text-blue-400" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-blue-400">
+              376{/*{totalItems.toLocaleString("pt-BR")}*/}
+            </div>
+            <p className={`text-xs ${textSecondary}`}>
+              In {inventory.length} Different Products
+            </p>
+            <div className="mt-2 flex items-center justify-between">
+              <span className={`text-xs ${textMuted}`}>Active Categories</span>
+              <span className={`text-xs font-medium ${textPrimary}`}>
+                {Object.keys(categoryStats).length}
+              </span>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className={cardClass}>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className={`text-sm font-medium ${textPrimary}`}>
+              Total Inventory Value
+            </CardTitle>
             <DollarSign className="h-4 w-4 text-green-400" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-400">
-              R$ {totalValue.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+              ${" "}
+              {totalValue.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
             </div>
             <p className={`text-xs ${textSecondary} flex items-center mt-1`}>
-              <TrendingUp className="h-3 w-3 mr-1 text-green-400" />+{todayStats.crescimento}% do mês passado
+              <TrendingUp className="h-3 w-3 mr-1 text-green-400" />+
+              {todayStats.Growth}% From Last Month
             </p>
             <div className="mt-2">
               <div className="flex justify-between text-xs">
-                <span className={textMuted}>Meta mensal</span>
+                <span className={textMuted}>Monthly Goal</span>
                 <span className={textMuted}>85%</span>
               </div>
               <Progress value={85} className="h-1 mt-1" />
@@ -147,148 +182,118 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
+        {/* TODO: Only Super Admin can see this */}
         <Card className={cardClass}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className={`text-sm font-medium ${textPrimary}`}>Itens em Estoque</CardTitle>
-            <Package className="h-4 w-4 text-blue-400" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-blue-400">{totalItems.toLocaleString("pt-BR")}</div>
-            <p className={`text-xs ${textSecondary}`}>Em {inventory.length} produtos diferentes</p>
-            <div className="mt-2 flex items-center justify-between">
-              <span className={`text-xs ${textMuted}`}>Categorias ativas</span>
-              <span className={`text-xs font-medium ${textPrimary}`}>{Object.keys(categoryStats).length}</span>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className={cardClass}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className={`text-sm font-medium ${textPrimary}`}>Alertas Críticos</CardTitle>
+            <CardTitle className={`text-sm font-medium ${textPrimary}`}>
+              Critical Alerts
+            </CardTitle>
             <AlertTriangle className="h-4 w-4 text-red-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-400">{lowStockItems.length + expiringItems.length}</div>
+            <div className="text-2xl font-bold text-red-400">
+              {lowStockItems.length + expiringItems.length}
+            </div>
             <p className={`text-xs ${textSecondary}`}>
-              {lowStockItems.length} estoque baixo • {expiringItems.length} vencendo
+              {lowStockItems.length} low stock • {expiringItems.length} vencendo
             </p>
             <div className="mt-2 flex items-center justify-between">
-              <span className={`text-xs ${textMuted}`}>Requer ação</span>
-              <span className={`text-xs font-medium text-red-400`}>{unreadNotifications} notificações</span>
+              <span className={`text-xs ${textMuted}`}>
+                {/* TODO: Change this to point to the right place and style it properly */}
+                <a href="#">check status</a>
+              </span>
+              <span className={`text-xs font-medium text-red-400`}>
+                {unreadNotifications} Notifications
+              </span>
             </div>
           </CardContent>
         </Card>
 
+        {/* TODO: Only Super Admin can see this */}
         <Card className={cardClass}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className={`text-sm font-medium ${textPrimary}`}>Pedidos e Vendas</CardTitle>
-            <ShoppingCart className="h-4 w-4 text-purple-400" />
+            <CardTitle className={`text-sm font-medium ${textPrimary}`}>
+              Total Admins
+            </CardTitle>
+            <Users className="h-4 w-4 text-blue-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-purple-400">{todayStats.pedidos}</div>
-            <p className={`text-xs ${textSecondary}`}>Pedidos hoje • {todayStats.clientes} clientes</p>
+            <div className="text-2xl font-bold text-blue-400">9</div>
+            <p className={`text-xs text-green-400`}>Active Admins: 3</p>
             <div className="mt-2 flex items-center justify-between">
-              <span className={`text-xs ${textMuted}`}>Pendentes</span>
-              <span className={`text-xs font-medium ${textPrimary}`}>{pendingOrders} pedidos</span>
+              <span className={`text-xs ${textMuted}`}>
+                {/* TODO: Change this to point to the right place and style it properly */}
+                <a href="#">see more</a>
+              </span>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Resumo por Categorias */}
+      {/* TODO: Chart would be Here */}
       <Card className={cardClass}>
         <CardHeader>
           <CardTitle className={`flex items-center gap-2 ${textPrimary}`}>
-            <BarChart className="h-5 w-5 text-amber-500" />
-            Resumo por Categorias
+            <BarChart className="h-5 w-5 text-blue-500" />
+            Progression Metrics
           </CardTitle>
-          <CardDescription className={textSecondary}>Visão geral do inventário por categoria</CardDescription>
+          <CardDescription className={textSecondary}>
+            chart displays the progression metric of products
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {Object.entries(categoryStats).map(([category, stats]) => (
-              <div
-                key={category}
-                className={`p-4 rounded-lg border ${theme === "dark" ? "border-gray-700 bg-gray-800/50" : "border-gray-200 bg-gray-50"}`}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <h4 className={`font-medium ${textPrimary}`}>{category}</h4>
-                  {stats.lowStock > 0 && (
-                    <Badge variant="outline" className="bg-red-900 text-red-300 border-red-700 text-xs">
-                      {stats.lowStock} baixo
-                    </Badge>
-                  )}
-                </div>
-                <div className="space-y-1">
-                  <div className="flex justify-between">
-                    <span className={`text-sm ${textMuted}`}>Valor total</span>
-                    <span className={`text-sm font-medium ${textPrimary}`}>
-                      R$ {stats.value.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className={`text-sm ${textMuted}`}>Quantidade</span>
-                    <span className={`text-sm font-medium ${textPrimary}`}>
-                      {stats.total.toLocaleString("pt-BR")} unidades
-                    </span>
-                  </div>
-                </div>
-              </div>
-            ))}
+          <div>
+            <h1>Barchart Would be Here</h1>
           </div>
         </CardContent>
       </Card>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {/* Alertas Críticos */}
+        {/* Alerts Container */}
         <Card className={cardClass}>
-          <CardHeader>
+          <CardHeader className={`border-b border-gray-400 mb-[-5px]`}>
             <CardTitle className={`flex items-center gap-2 ${textPrimary}`}>
               <AlertTriangle className="h-5 w-5 text-red-400" />
-              Alertas Críticos
+              Critical Alerts
             </CardTitle>
-            <CardDescription className={textSecondary}>Itens que requerem atenção imediata</CardDescription>
+            <CardDescription className={textSecondary}>
+              Suspicious activities
+            </CardDescription>
           </CardHeader>
+          <a
+            className="relative flex item-center space-x-1.5 left-[72%] bottom-[14%] text-[15px]"
+            href="#"
+          >
+            <span>see more</span> <ArrowUpRight className="w-[4%] relative top-[-2px]" />
+          </a>
           <CardContent className="space-y-3">
             {lowStockItems.slice(0, 4).map((item) => (
               <div
                 key={item.id}
                 className={`flex items-center justify-between p-3 rounded-lg border ${
-                  theme === "dark" ? "bg-red-950/50 border-red-800" : "bg-red-50 border-red-200"
+                  theme === "dark"
+                    ? "bg-red-950/50 border-red-800"
+                    : "bg-red-50 border-red-200"
                 }`}
               >
                 <div className="flex-1">
-                  <p className={`font-medium text-sm ${textPrimary}`}>{item.name}</p>
+                  <p className={`font-medium text-sm ${textPrimary}`}>
+                    Multiple Login Attempts
+                  </p>
                   <div className="flex items-center gap-4 mt-1">
-                    <span className={`text-xs ${textSecondary}`}>
-                      {item.currentStock} {item.unit}
+                    <span className={`text-xs ${textMuted}`}>
+                      IP: 1.200.33.3.22
                     </span>
-                    <span className={`text-xs ${textMuted}`}>Mín: {item.minStock}</span>
                   </div>
                 </div>
                 <div className="text-right">
-                  <Badge variant="outline" className="bg-red-900 text-red-300 border-red-700 text-xs">
-                    {Math.round((item.currentStock / item.minStock) * 100)}%
+                  <Badge
+                    variant="outline"
+                    className="bg-red-900 text-red-300 border-red-700 text-xs"
+                  >
+                    3.5
                   </Badge>
                 </div>
-              </div>
-            ))}
-            {expiringItems.slice(0, 2).map((item) => (
-              <div
-                key={item.id}
-                className={`flex items-center justify-between p-3 rounded-lg border ${
-                  theme === "dark" ? "bg-yellow-950/50 border-yellow-800" : "bg-yellow-50 border-yellow-200"
-                }`}
-              >
-                <div className="flex-1">
-                  <p className={`font-medium text-sm ${textPrimary}`}>{item.name}</p>
-                  <span className={`text-xs ${textSecondary}`}>
-                    Vence: {new Date(item.expiryDate).toLocaleDateString("pt-BR")}
-                  </span>
-                </div>
-                <Badge variant="outline" className="bg-yellow-900 text-yellow-300 border-yellow-700 text-xs">
-                  Vencendo
-                </Badge>
               </div>
             ))}
           </CardContent>
@@ -301,7 +306,9 @@ export default function Dashboard() {
               <TrendingUp className="h-5 w-5 text-green-400" />
               Itens Mais Vendidos
             </CardTitle>
-            <CardDescription className={textSecondary}>Top 5 produtos deste mês</CardDescription>
+            <CardDescription className={textSecondary}>
+              Top 5 produtos deste mês
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             {topSellingItems.map((item, index) => (
@@ -311,15 +318,23 @@ export default function Dashboard() {
                     {index + 1}
                   </div>
                   <div className="flex-1">
-                    <p className={`font-medium text-sm ${textPrimary}`}>{item.nome}</p>
+                    <p className={`font-medium text-sm ${textPrimary}`}>
+                      {item.nome}
+                    </p>
                     <div className="flex items-center gap-3 mt-1">
-                      <span className={`text-xs ${textSecondary}`}>{item.vendidos} vendidos</span>
-                      <span className={`text-xs ${textMuted}`}>Estoque: {item.estoque}</span>
+                      <span className={`text-xs ${textSecondary}`}>
+                        {item.vendidos} vendidos
+                      </span>
+                      <span className={`text-xs ${textMuted}`}>
+                        Estoque: {item.estoque}
+                      </span>
                     </div>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="font-medium text-sm text-green-400">R$ {item.receita.toLocaleString("pt-BR")}</p>
+                  <p className="font-medium text-sm text-green-400">
+                    R$ {item.receita.toLocaleString("pt-BR")}
+                  </p>
                 </div>
               </div>
             ))}
@@ -333,7 +348,9 @@ export default function Dashboard() {
               <Clock className="h-5 w-5 text-blue-400" />
               Atividade Recente
             </CardTitle>
-            <CardDescription className={textSecondary}>Últimas atualizações do sistema</CardDescription>
+            <CardDescription className={textSecondary}>
+              Últimas atualizações do sistema
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             {recentActivity.map((activity, index) => (
@@ -344,18 +361,24 @@ export default function Dashboard() {
                       activity.tipo === "warning"
                         ? "bg-yellow-400"
                         : activity.tipo === "success"
-                          ? "bg-green-400"
-                          : "bg-blue-400"
+                        ? "bg-green-400"
+                        : "bg-blue-400"
                     }`}
                   />
                   <div className="flex-1">
-                    <p className={`text-sm font-medium ${textPrimary}`}>{activity.acao}</p>
-                    <p className={`text-xs ${textSecondary}`}>{activity.item}</p>
+                    <p className={`text-sm font-medium ${textPrimary}`}>
+                      {activity.acao}
+                    </p>
+                    <p className={`text-xs ${textSecondary}`}>
+                      {activity.item}
+                    </p>
                     <p className={`text-xs ${textMuted}`}>{activity.tempo}</p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <span className={`text-xs font-medium ${textPrimary}`}>{activity.valor}</span>
+                  <span className={`text-xs font-medium ${textPrimary}`}>
+                    {activity.valor}
+                  </span>
                 </div>
               </div>
             ))}
@@ -363,7 +386,7 @@ export default function Dashboard() {
         </Card>
       </div>
 
-      {/* Resumo de Performance */}
+      {/*  */}
       <div className="grid gap-6 md:grid-cols-2">
         <Card className={cardClass}>
           <CardHeader>
@@ -371,38 +394,67 @@ export default function Dashboard() {
               <CheckCircle className="h-5 w-5 text-green-400" />
               Performance do Sistema
             </CardTitle>
-            <CardDescription className={textSecondary}>Indicadores de saúde do sistema</CardDescription>
+            <CardDescription className={textSecondary}>
+              Indicadores de saúde do sistema
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className={`text-sm ${textPrimary}`}>Estoque Saudável</span>
+                <span className={`text-sm ${textPrimary}`}>
+                  Estoque Saudável
+                </span>
                 <span className="text-sm font-medium text-green-400">
                   {inventory.length - lowStockItems.length}/{inventory.length}
                 </span>
               </div>
-              <Progress value={((inventory.length - lowStockItems.length) / inventory.length) * 100} className="h-2" />
+              <Progress
+                value={
+                  ((inventory.length - lowStockItems.length) /
+                    inventory.length) *
+                  100
+                }
+                className="h-2"
+              />
             </div>
 
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className={`text-sm ${textPrimary}`}>Fornecedores Ativos</span>
-                <span className="text-sm font-medium text-blue-400">
-                  {suppliers.filter((s) => s.isActive).length}/{suppliers.length}
+                <span className={`text-sm ${textPrimary}`}>
+                  Fornecedores Ativos
                 </span>
-              </div>
-              <Progress value={(suppliers.filter((s) => s.isActive).length / suppliers.length) * 100} className="h-2" />
-            </div>
-
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className={`text-sm ${textPrimary}`}>Pedidos Entregues</span>
-                <span className="text-sm font-medium text-purple-400">
-                  {purchaseOrders.filter((p) => p.status === "entregue").length}/{purchaseOrders.length}
+                <span className="text-sm font-medium text-blue-400">
+                  {suppliers.filter((s) => s.isActive).length}/
+                  {suppliers.length}
                 </span>
               </div>
               <Progress
-                value={(purchaseOrders.filter((p) => p.status === "entregue").length / purchaseOrders.length) * 100}
+                value={
+                  (suppliers.filter((s) => s.isActive).length /
+                    suppliers.length) *
+                  100
+                }
+                className="h-2"
+              />
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className={`text-sm ${textPrimary}`}>
+                  Pedidos Entregues
+                </span>
+                <span className="text-sm font-medium text-purple-400">
+                  {purchaseOrders.filter((p) => p.status === "entregue").length}
+                  /{purchaseOrders.length}
+                </span>
+              </div>
+              <Progress
+                value={
+                  (purchaseOrders.filter((p) => p.status === "entregue")
+                    .length /
+                    purchaseOrders.length) *
+                  100
+                }
                 className="h-2"
               />
             </div>
@@ -415,43 +467,78 @@ export default function Dashboard() {
               <Calendar className="h-5 w-5 text-amber-500" />
               Próximas Ações
             </CardTitle>
-            <CardDescription className={textSecondary}>Tarefas e lembretes importantes</CardDescription>
+            <CardDescription className={textSecondary}>
+              Tarefas e lembretes importantes
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             <div
-              className={`p-3 rounded-lg border ${theme === "dark" ? "border-amber-800 bg-amber-950/50" : "border-amber-200 bg-amber-50"}`}
+              className={`p-3 rounded-lg border ${
+                theme === "dark"
+                  ? "border-amber-800 bg-amber-950/50"
+                  : "border-amber-200 bg-amber-50"
+              }`}
             >
               <div className="flex items-center justify-between">
-                <span className={`text-sm font-medium ${textPrimary}`}>Reabastecer estoque baixo</span>
-                <Badge variant="outline" className="bg-amber-900 text-amber-300 border-amber-700 text-xs">
+                <span className={`text-sm font-medium ${textPrimary}`}>
+                  Reabastecer estoque baixo
+                </span>
+                <Badge
+                  variant="outline"
+                  className="bg-amber-900 text-amber-300 border-amber-700 text-xs"
+                >
                   Urgente
                 </Badge>
               </div>
-              <p className={`text-xs ${textSecondary} mt-1`}>{lowStockItems.length} itens precisam de reposição</p>
+              <p className={`text-xs ${textSecondary} mt-1`}>
+                {lowStockItems.length} itens precisam de reposição
+              </p>
             </div>
 
             <div
-              className={`p-3 rounded-lg border ${theme === "dark" ? "border-blue-800 bg-blue-950/50" : "border-blue-200 bg-blue-50"}`}
+              className={`p-3 rounded-lg border ${
+                theme === "dark"
+                  ? "border-blue-800 bg-blue-950/50"
+                  : "border-blue-200 bg-blue-50"
+              }`}
             >
               <div className="flex items-center justify-between">
-                <span className={`text-sm font-medium ${textPrimary}`}>Verificar vencimentos</span>
-                <Badge variant="outline" className="bg-blue-900 text-blue-300 border-blue-700 text-xs">
+                <span className={`text-sm font-medium ${textPrimary}`}>
+                  Verificar vencimentos
+                </span>
+                <Badge
+                  variant="outline"
+                  className="bg-blue-900 text-blue-300 border-blue-700 text-xs"
+                >
                   Hoje
                 </Badge>
               </div>
-              <p className={`text-xs ${textSecondary} mt-1`}>{expiringItems.length} itens vencem em 30 dias</p>
+              <p className={`text-xs ${textSecondary} mt-1`}>
+                {expiringItems.length} itens vencem em 30 dias
+              </p>
             </div>
 
             <div
-              className={`p-3 rounded-lg border ${theme === "dark" ? "border-green-800 bg-green-950/50" : "border-green-200 bg-green-50"}`}
+              className={`p-3 rounded-lg border ${
+                theme === "dark"
+                  ? "border-green-800 bg-green-950/50"
+                  : "border-green-200 bg-green-50"
+              }`}
             >
               <div className="flex items-center justify-between">
-                <span className={`text-sm font-medium ${textPrimary}`}>Aprovar pedidos</span>
-                <Badge variant="outline" className="bg-green-900 text-green-300 border-green-700 text-xs">
+                <span className={`text-sm font-medium ${textPrimary}`}>
+                  Aprovar pedidos
+                </span>
+                <Badge
+                  variant="outline"
+                  className="bg-green-900 text-green-300 border-green-700 text-xs"
+                >
                   {pendingOrders}
                 </Badge>
               </div>
-              <p className={`text-xs ${textSecondary} mt-1`}>Pedidos aguardando aprovação</p>
+              <p className={`text-xs ${textSecondary} mt-1`}>
+                Pedidos aguardando aprovação
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -461,7 +548,9 @@ export default function Dashboard() {
       <Card className={cardClass}>
         <CardHeader>
           <CardTitle className={textPrimary}>Ações Rápidas</CardTitle>
-          <CardDescription className={textSecondary}>Operações mais utilizadas</CardDescription>
+          <CardDescription className={textSecondary}>
+            Operações mais utilizadas
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
@@ -506,5 +595,5 @@ export default function Dashboard() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

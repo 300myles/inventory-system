@@ -1,10 +1,9 @@
 "use client"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Package, TrendingUp, Users, ShoppingCart, BarChart3, Settings, Bell, Download } from "lucide-react"
+import { Package, TrendingUp, Users, BookCheck, Settings, Bell, Download, HomeIcon, PackagePlus, HistoryIcon } from "lucide-react"
 import Dashboard from "@/components/dashboard"
 import InventoryManager from "@/components/inventory-manager"
-import SuppliersManager from "@/components/suppliers-manager"
 import PurchaseOrders from "@/components/purchase-orders"
 import Reports from "@/components/reports"
 import SystemSettings from "@/components/system-settings"
@@ -14,7 +13,7 @@ import { ThemeProvider, useTheme } from "@/contexts/theme-context"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Button } from "@/components/ui/button"
 
-// Componente de Logo Elaborado
+// ElaboratedCoffeeLogo Component
 function ElaboratedCoffeeLogo({ size = "large" }) {
   const { theme } = useTheme()
   const logoSize = size === "large" ? "h-12 w-12" : "h-6 w-6"
@@ -48,7 +47,7 @@ function ElaboratedCoffeeLogo({ size = "large" }) {
         {/* Brilho superior */}
         <div className="absolute top-1 left-2 w-2 h-2 bg-white/30 rounded-full blur-sm"></div>
 
-        {/* Indicador de status online */}
+        {/* Status Online Indicator */}
         <div
           className={`absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-pulse border-2 ${
             theme === "dark" ? "border-gray-900" : "border-white"
@@ -59,10 +58,10 @@ function ElaboratedCoffeeLogo({ size = "large" }) {
       {size === "large" && (
         <div>
           <h1 className={`${textSize} font-bold tracking-wide ${theme === "dark" ? "text-gray-100" : "text-gray-900"}`}>
-            Oliver Coffee
+            TC
           </h1>
           <p className={`text-sm font-medium ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
-            Sistema de Gestão de Inventário
+            Inventory Management System
           </p>
         </div>
       )}
@@ -77,9 +76,9 @@ function OliverCoffeeInventorySystemContent() {
     // Funcionalidade de exportação de dados
     const data = {
       timestamp: new Date().toISOString(),
-      sistema: "Sistema de Inventário Oliver Coffee",
-      versao: "2.0.0",
-      tema: theme,
+      system: "Inventory System TC",
+      version: "2.0.0",
+      theme: theme,
     }
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" })
     const url = URL.createObjectURL(blob)
@@ -92,12 +91,16 @@ function OliverCoffeeInventorySystemContent() {
   return (
     <div
       className={`min-h-screen transition-colors duration-300 ${
-        theme === "dark" ? "bg-gray-950 text-gray-100" : "bg-gray-50 text-gray-900"
+        theme === "dark"
+          ? "bg-gray-950 text-gray-100"
+          : "bg-gray-50 text-gray-900"
       }`}
     >
       <header
         className={`shadow-lg border-b transition-colors duration-300 ${
-          theme === "dark" ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"
+          theme === "dark"
+            ? "bg-gray-900 border-gray-800"
+            : "bg-white border-gray-200"
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -109,14 +112,14 @@ function OliverCoffeeInventorySystemContent() {
                 variant="outline"
                 size="sm"
                 onClick={exportData}
-                className={`transition-colors duration-300 ${
+                className={`transition-colors hover:cursor-pointer duration-300 ${
                   theme === "dark"
                     ? "border-gray-700 hover:bg-gray-800 text-gray-200"
                     : "border-gray-300 hover:bg-gray-100 text-gray-700"
                 }`}
               >
                 <Download className="h-4 w-4 mr-2" />
-                Exportar
+                Export Data
               </Button>
               <Badge
                 variant="outline"
@@ -127,14 +130,23 @@ function OliverCoffeeInventorySystemContent() {
                 }`}
               >
                 <div className="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></div>
-                Sistema Online
+                System Online
               </Badge>
+              {/* TODO: Change the element below to admin profile */}
               <div className="text-right">
-                <p className={`text-sm font-medium ${theme === "dark" ? "text-gray-200" : "text-gray-800"}`}>
-                  Usuário Admin
+                <p
+                  className={`text-sm font-medium ${
+                    theme === "dark" ? "text-gray-200" : "text-gray-800"
+                  }`}
+                >
+                  User Admin
                 </p>
-                <p className={`text-xs ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
-                  Último acesso: Hoje 09:30
+                <p
+                  className={`text-xs ${
+                    theme === "dark" ? "text-gray-400" : "text-gray-600"
+                  }`}
+                >
+                  Last Login: 09:30
                 </p>
               </div>
             </div>
@@ -146,85 +158,66 @@ function OliverCoffeeInventorySystemContent() {
         <Tabs defaultValue="dashboard" className="space-y-6">
           <TabsList
             className={`grid w-full grid-cols-7 lg:w-fit border transition-colors duration-300 ${
-              theme === "dark" ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"
+              theme === "dark"
+                ? "bg-gray-900 border-gray-800"
+                : "bg-white border-gray-200"
             }`}
           >
             <TabsTrigger
               value="dashboard"
-              className={`flex items-center gap-2 transition-colors duration-300 ${
+              className={`flex items-center gap-2 hover:cursor-pointer transition-colors duration-300 ${
                 theme === "dark"
-                  ? "data-[state=active]:bg-amber-600 data-[state=active]:text-white hover:bg-gray-800"
-                  : "data-[state=active]:bg-amber-500 data-[state=active]:text-white hover:bg-gray-100"
+                  ? "data-[state=active]:bg-blue-900 data-[state=active]:text-white hover:bg-gray-800"
+                  : "data-[state=active]:bg-blue-500 data-[state=active]:text-white hover:bg-gray-100"
               }`}
             >
-              <BarChart3 className="h-4 w-4" />
-              Painel
+              <HomeIcon className="h-4 w-4" />
+              Home
             </TabsTrigger>
             <TabsTrigger
               value="inventory"
-              className={`flex items-center gap-2 transition-colors duration-300 ${
+              className={`flex items-center gap-2  hover:cursor-pointer transition-colors duration-300 ${
                 theme === "dark"
-                  ? "data-[state=active]:bg-amber-600 data-[state=active]:text-white hover:bg-gray-800"
-                  : "data-[state=active]:bg-amber-500 data-[state=active]:text-white hover:bg-gray-100"
+                  ? "data-[state=active]:bg-blue-900 data-[state=active]:text-white hover:bg-gray-800"
+                  : "data-[state=active]:bg-blue-500 data-[state=active]:text-white hover:bg-gray-100"
               }`}
             >
-              <Package className="h-4 w-4" />
-              Inventário
-            </TabsTrigger>
-            <TabsTrigger
-              value="suppliers"
-              className={`flex items-center gap-2 transition-colors duration-300 ${
-                theme === "dark"
-                  ? "data-[state=active]:bg-amber-600 data-[state=active]:text-white hover:bg-gray-800"
-                  : "data-[state=active]:bg-amber-500 data-[state=active]:text-white hover:bg-gray-100"
-              }`}
-            >
-              <Users className="h-4 w-4" />
-              Fornecedores
+              <PackagePlus className="h-4 w-4" />
+              Inventory
             </TabsTrigger>
             <TabsTrigger
               value="orders"
-              className={`flex items-center gap-2 transition-colors duration-300 ${
+              className={`flex items-center gap-2 hover:cursor-pointer transition-colors duration-300 ${
                 theme === "dark"
-                  ? "data-[state=active]:bg-amber-600 data-[state=active]:text-white hover:bg-gray-800"
-                  : "data-[state=active]:bg-amber-500 data-[state=active]:text-white hover:bg-gray-100"
+                  ? "data-[state=active]:bg-blue-900 data-[state=active]:text-white hover:bg-gray-800"
+                  : "data-[state=active]:bg-blue-500 data-[state=active]:text-white hover:bg-gray-100"
               }`}
             >
-              <ShoppingCart className="h-4 w-4" />
-              Pedidos
+              <HistoryIcon className="h-4 w-4" />
+              Inventory History
             </TabsTrigger>
-            <TabsTrigger
-              value="reports"
-              className={`flex items-center gap-2 transition-colors duration-300 ${
-                theme === "dark"
-                  ? "data-[state=active]:bg-amber-600 data-[state=active]:text-white hover:bg-gray-800"
-                  : "data-[state=active]:bg-amber-500 data-[state=active]:text-white hover:bg-gray-100"
-              }`}
-            >
-              <TrendingUp className="h-4 w-4" />
-              Relatórios
-            </TabsTrigger>
+
             <TabsTrigger
               value="notifications"
-              className={`flex items-center gap-2 transition-colors duration-300 ${
+              className={`flex items-center hover:cursor-pointer gap-2 transition-colors duration-300 ${
                 theme === "dark"
-                  ? "data-[state=active]:bg-amber-600 data-[state=active]:text-white hover:bg-gray-800"
-                  : "data-[state=active]:bg-amber-500 data-[state=active]:text-white hover:bg-gray-100"
+                  ? "data-[state=active]:bg-blue-900 data-[state=active]:text-white hover:bg-gray-800"
+                  : "data-[state=active]:bg-blue-500 data-[state=active]:text-white hover:bg-gray-100"
               }`}
             >
               <Bell className="h-4 w-4" />
-              Alertas
+              Alerts
             </TabsTrigger>
             <TabsTrigger
               value="settings"
-              className={`flex items-center gap-2 transition-colors duration-300 ${
+              className={`flex items-center hover:cursor-pointer gap-2 transition-colors duration-300 ${
                 theme === "dark"
-                  ? "data-[state=active]:bg-amber-600 data-[state=active]:text-white hover:bg-gray-800"
-                  : "data-[state=active]:bg-amber-500 data-[state=active]:text-white hover:bg-gray-100"
+                  ? "data-[state=active]:bg-blue-900 data-[state=active]:text-white hover:bg-gray-800"
+                  : "data-[state=active]:bg-blue-500 data-[state=active]:text-white hover:bg-gray-100"
               }`}
             >
               <Settings className="h-4 w-4" />
-              Configurações
+              Settings
             </TabsTrigger>
           </TabsList>
 
@@ -235,11 +228,6 @@ function OliverCoffeeInventorySystemContent() {
           <TabsContent value="inventory">
             <InventoryManager />
           </TabsContent>
-
-          <TabsContent value="suppliers">
-            <SuppliersManager />
-          </TabsContent>
-
           <TabsContent value="orders">
             <PurchaseOrders />
           </TabsContent>
@@ -260,25 +248,36 @@ function OliverCoffeeInventorySystemContent() {
 
       <footer
         className={`border-t mt-12 transition-colors duration-300 ${
-          theme === "dark" ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"
+          theme === "dark"
+            ? "bg-gray-900 border-gray-800"
+            : "bg-white border-gray-200"
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-3">
+              {/* TODO: Update this logo to the company's own */}
               <ElaboratedCoffeeLogo size="small" />
-              <span className={`text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
-                © 2024 Oliver Coffee. Todos os direitos reservados.
+              <span
+                className={`text-sm ${
+                  theme === "dark" ? "text-gray-400" : "text-gray-600"
+                }`}
+              >
+                © 2025 TC. All Rights Reserved.
               </span>
             </div>
-            <div className={`text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
-              Versão 2.0.0 | Última atualização: {new Date().toLocaleDateString("pt-BR")}
+            <div
+              className={`text-sm ${
+                theme === "dark" ? "text-gray-400" : "text-gray-600"
+              }`}
+            >
+              Version 1.0 
             </div>
           </div>
         </div>
       </footer>
     </div>
-  )
+  );
 }
 
 export default function OliverCoffeeInventorySystem() {
