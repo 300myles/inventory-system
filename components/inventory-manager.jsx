@@ -159,19 +159,19 @@ export default function InventoryManager() {
       {/* Cabeçalho */}
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-gray-200">Gestão de Inventário</h2>
-          <p className="text-gray-400">Gerencie os itens do inventário da Oliver Coffee</p>
+          <h2 className="text-2xl font-bold text-black dark:text-gray-200">Inventory</h2>
+          <p className="{textSecondary}">Comprehensive Inventory Overview</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="border-gray-700 hover:bg-gray-800 text-gray-200 bg-transparent">
+          <Button variant="outline" className="border-gray-700 hover:bg-gray-800 hover:cursor-pointer text-black hover:text-gray-200 dark:text-gray-200 bg-transparent">
             <Scan className="h-4 w-4 mr-2" />
-            Escanear Código
+            Expand View
           </Button>
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-amber-600 hover:bg-amber-700">
+              <Button className="bg-blue-600 hover:bg-blue-700 text-white hover:cursor-pointer">
                 <Plus className="h-4 w-4 mr-2" />
-                Adicionar Item
+                Add Item
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-gray-900 border-gray-800">
@@ -426,10 +426,10 @@ export default function InventoryManager() {
             <div className="relative flex-1 max-w-sm">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
-                placeholder="Buscar itens, SKU ou código de barras..."
+                placeholder="Search For Items..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 bg-gray-800 border-gray-700 text-gray-200"
+                className="pl-10 bg-gray-800   border-gray-700 text-gray-200"
               />
             </div>
             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
@@ -466,7 +466,7 @@ export default function InventoryManager() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-gray-200">
             <Package className="h-5 w-5" />
-            Itens do Inventário ({filteredInventory.length})
+            Items in Inventory ({filteredInventory.length})
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -474,15 +474,15 @@ export default function InventoryManager() {
             <Table>
               <TableHeader>
                 <TableRow className="border-gray-800">
-                  <TableHead className="text-gray-300">Imagem</TableHead>
+                  <TableHead className="text-gray-300">Image</TableHead>
                   <TableHead className="text-gray-300">Item</TableHead>
-                  <TableHead className="text-gray-300">Categoria</TableHead>
-                  <TableHead className="text-gray-300">Estoque</TableHead>
+                  <TableHead className="text-gray-300">Category</TableHead>
+                  <TableHead className="text-gray-300">Weight</TableHead>
                   <TableHead className="text-gray-300">Status</TableHead>
-                  <TableHead className="text-gray-300">Fornecedor</TableHead>
-                  <TableHead className="text-gray-300">Valor</TableHead>
-                  <TableHead className="text-gray-300">Previsão</TableHead>
-                  <TableHead className="text-gray-300">Ações</TableHead>
+                  <TableHead className="text-gray-300">Description</TableHead>
+                  <TableHead className="text-gray-300">Price</TableHead>
+                  <TableHead className="text-gray-300">Weight</TableHead>
+                  <TableHead className="text-gray-300">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

@@ -157,7 +157,7 @@ function OliverCoffeeInventorySystemContent() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs defaultValue="dashboard" className="space-y-6">
           <TabsList
-            className={`grid w-full grid-cols-7 lg:w-fit border transition-colors duration-300 ${
+            className={`grid w-full grid-cols-5 lg:w-full border transition-colors duration-300 ${
               theme === "dark"
                 ? "bg-gray-900 border-gray-800"
                 : "bg-white border-gray-200"

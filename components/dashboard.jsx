@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import {
   Package,
-  AlertTriangle,
+  AlertTriangle,  
   DollarSign,
   ShoppingCart,
   TrendingUp,
@@ -18,6 +18,7 @@ import {
   HomeIcon,
   ArrowRight,
   ArrowUpRight,
+  HistoryIcon,
 } from "lucide-react"
 import { useInventory } from "@/contexts/inventory-context"
 import { useTheme } from "@/contexts/theme-context"
@@ -41,14 +42,29 @@ export default function Dashboard() {
     Growth: 15.2,
   }
 
-  // Itens mais vendidos (dados simplificados)
-  const topSellingItems = [
-    { nome: "Grãos Etíopes Yirgacheffe", vendidos: 145, receita: 7263, estoque: 45 },
-    { nome: "Café Colombiano Supremo", vendidos: 132, receita: 5841, estoque: 12 },
-    { nome: "Copos de Papel Premium", vendidos: 2840, receita: 1704, estoque: 850 },
-    { nome: "Leite Integral Orgânico", vendidos: 89, receita: 1269, estoque: 18 },
-    { nome: "Xarope de Baunilha", vendidos: 67, receita: 1910, estoque: 6 },
-  ]
+  // Low stocks
+  const lowStocks = [
+    { nome: "Manpower", totalLeft: 145, receita: 7263, estoque: 45 },
+    {
+      nome: "Electric WristWatch",
+      totalLeft: 3,
+      receita: 5841,
+      estoque: 12,
+    },
+    {
+      nome: "Rayban Meta glasses",
+      totalLeft: 4,
+      receita: 1704,
+      estoque: 850,
+    },
+    {
+      nome: "WristWatch",
+      totalLeft: 5,
+      receita: 1269,
+      estoque: 18,
+    },
+    { nome: "WristWatch", totalLeft: 6, receita: 1910, estoque: 6 },
+  ];
 
   // Atividades recentes simplificadas
   const recentActivity = [
@@ -131,7 +147,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Métricas Principais */}
+      {/* Dashboard Start */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card className={cardClass}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -248,7 +264,7 @@ export default function Dashboard() {
         </CardContent>
       </Card>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-2">
         {/* Alerts Container */}
         <Card className={cardClass}>
           <CardHeader className={`border-b border-gray-400 mb-[-5px]`}>
@@ -261,10 +277,11 @@ export default function Dashboard() {
             </CardDescription>
           </CardHeader>
           <a
-            className="relative flex item-center space-x-1.5 left-[72%] bottom-[14%] text-[15px]"
+            className="relative flex item-center underline space-x-1.5 left-[72%] bottom-[14%] text-[15px]"
             href="#"
           >
-            <span>see more</span> <ArrowUpRight className="w-[4%] relative top-[-2px]" />
+            <span>see more</span>{" "}
+            <ArrowUpRight className="w-[4%] relative top-[-2px]" />
           </a>
           <CardContent className="space-y-3">
             {lowStockItems.slice(0, 4).map((item) => (
@@ -299,19 +316,26 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        {/* Itens Mais Vendidos */}
+        {/* Low Stock Alert Container */}
         <Card className={cardClass}>
-          <CardHeader>
+          <CardHeader className={`border-b border-gray-400 mb-[8px]`}>
             <CardTitle className={`flex items-center gap-2 ${textPrimary}`}>
-              <TrendingUp className="h-5 w-5 text-green-400" />
-              Itens Mais Vendidos
+              <AlertTriangle className="h-5 w-5 text-yellow-400" />
+              Low Stock Alert
             </CardTitle>
             <CardDescription className={textSecondary}>
-              Top 5 produtos deste mês
+              stocks that needs attention
             </CardDescription>
           </CardHeader>
+          <a
+            className="relative flex item-center underline space-x-1.5 left-[72%] bottom-[14%] text-[15px]"
+            href="#"
+          >
+            <span>see more</span>{" "}
+            <ArrowUpRight className="w-[4%] relative top-[-2px]" />
+          </a>
           <CardContent className="space-y-3">
-            {topSellingItems.map((item, index) => (
+            {lowStocks.map((item, index) => (
               <div key={index} className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <div className="w-8 h-8 bg-amber-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
@@ -323,62 +347,18 @@ export default function Dashboard() {
                     </p>
                     <div className="flex items-center gap-3 mt-1">
                       <span className={`text-xs ${textSecondary}`}>
-                        {item.vendidos} vendidos
-                      </span>
-                      <span className={`text-xs ${textMuted}`}>
-                        Estoque: {item.estoque}
+                        {item.totalLeft} Total Available
                       </span>
                     </div>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="font-medium text-sm text-green-400">
-                    R$ {item.receita.toLocaleString("pt-BR")}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-
-        {/* Atividade Recente */}
-        <Card className={cardClass}>
-          <CardHeader>
-            <CardTitle className={`flex items-center gap-2 ${textPrimary}`}>
-              <Clock className="h-5 w-5 text-blue-400" />
-              Atividade Recente
-            </CardTitle>
-            <CardDescription className={textSecondary}>
-              Últimas atualizações do sistema
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {recentActivity.map((activity, index) => (
-              <div key={index} className="flex items-center justify-between">
-                <div className="flex items-start space-x-3">
-                  <div
-                    className={`w-2 h-2 rounded-full mt-2 ${
-                      activity.tipo === "warning"
-                        ? "bg-yellow-400"
-                        : activity.tipo === "success"
-                        ? "bg-green-400"
-                        : "bg-blue-400"
-                    }`}
-                  />
-                  <div className="flex-1">
-                    <p className={`text-sm font-medium ${textPrimary}`}>
-                      {activity.acao}
-                    </p>
-                    <p className={`text-xs ${textSecondary}`}>
-                      {activity.item}
-                    </p>
-                    <p className={`text-xs ${textMuted}`}>{activity.tempo}</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <span className={`text-xs font-medium ${textPrimary}`}>
-                    {activity.valor}
-                  </span>
+                  <Badge
+                    variant="outline"
+                    className="bg-yellow-900 text-yellow-300 border-yellow-700 text-xs"
+                  >
+                    7
+                  </Badge>
                 </div>
               </div>
             ))}
@@ -386,114 +366,19 @@ export default function Dashboard() {
         </Card>
       </div>
 
-      {/*  */}
-      <div className="grid gap-6 md:grid-cols-2">
+      {/* Inventory History Container */}
+      <div className="grid">
         <Card className={cardClass}>
-          <CardHeader>
+          <CardHeader className={`border-b border-gray-400`}>
             <CardTitle className={`flex items-center gap-2 ${textPrimary}`}>
-              <CheckCircle className="h-5 w-5 text-green-400" />
-              Performance do Sistema
+              <HistoryIcon className="h-5 w-5 text-amber-500" />
+              Inventory History
             </CardTitle>
             <CardDescription className={textSecondary}>
-              Indicadores de saúde do sistema
+              Recent Inventory Updates
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className={`text-sm ${textPrimary}`}>
-                  Estoque Saudável
-                </span>
-                <span className="text-sm font-medium text-green-400">
-                  {inventory.length - lowStockItems.length}/{inventory.length}
-                </span>
-              </div>
-              <Progress
-                value={
-                  ((inventory.length - lowStockItems.length) /
-                    inventory.length) *
-                  100
-                }
-                className="h-2"
-              />
-            </div>
-
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className={`text-sm ${textPrimary}`}>
-                  Fornecedores Ativos
-                </span>
-                <span className="text-sm font-medium text-blue-400">
-                  {suppliers.filter((s) => s.isActive).length}/
-                  {suppliers.length}
-                </span>
-              </div>
-              <Progress
-                value={
-                  (suppliers.filter((s) => s.isActive).length /
-                    suppliers.length) *
-                  100
-                }
-                className="h-2"
-              />
-            </div>
-
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className={`text-sm ${textPrimary}`}>
-                  Pedidos Entregues
-                </span>
-                <span className="text-sm font-medium text-purple-400">
-                  {purchaseOrders.filter((p) => p.status === "entregue").length}
-                  /{purchaseOrders.length}
-                </span>
-              </div>
-              <Progress
-                value={
-                  (purchaseOrders.filter((p) => p.status === "entregue")
-                    .length /
-                    purchaseOrders.length) *
-                  100
-                }
-                className="h-2"
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className={cardClass}>
-          <CardHeader>
-            <CardTitle className={`flex items-center gap-2 ${textPrimary}`}>
-              <Calendar className="h-5 w-5 text-amber-500" />
-              Próximas Ações
-            </CardTitle>
-            <CardDescription className={textSecondary}>
-              Tarefas e lembretes importantes
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div
-              className={`p-3 rounded-lg border ${
-                theme === "dark"
-                  ? "border-amber-800 bg-amber-950/50"
-                  : "border-amber-200 bg-amber-50"
-              }`}
-            >
-              <div className="flex items-center justify-between">
-                <span className={`text-sm font-medium ${textPrimary}`}>
-                  Reabastecer estoque baixo
-                </span>
-                <Badge
-                  variant="outline"
-                  className="bg-amber-900 text-amber-300 border-amber-700 text-xs"
-                >
-                  Urgente
-                </Badge>
-              </div>
-              <p className={`text-xs ${textSecondary} mt-1`}>
-                {lowStockItems.length} itens precisam de reposição
-              </p>
-            </div>
+          <CardContent className="space-y-3 mt-[15px]">
 
             <div
               className={`p-3 rounded-lg border ${
@@ -504,7 +389,7 @@ export default function Dashboard() {
             >
               <div className="flex items-center justify-between">
                 <span className={`text-sm font-medium ${textPrimary}`}>
-                  Verificar vencimentos
+                  Item Sold
                 </span>
                 <Badge
                   variant="outline"
@@ -518,82 +403,10 @@ export default function Dashboard() {
               </p>
             </div>
 
-            <div
-              className={`p-3 rounded-lg border ${
-                theme === "dark"
-                  ? "border-green-800 bg-green-950/50"
-                  : "border-green-200 bg-green-50"
-              }`}
-            >
-              <div className="flex items-center justify-between">
-                <span className={`text-sm font-medium ${textPrimary}`}>
-                  Aprovar pedidos
-                </span>
-                <Badge
-                  variant="outline"
-                  className="bg-green-900 text-green-300 border-green-700 text-xs"
-                >
-                  {pendingOrders}
-                </Badge>
-              </div>
-              <p className={`text-xs ${textSecondary} mt-1`}>
-                Pedidos aguardando aprovação
-              </p>
-            </div>
+
           </CardContent>
         </Card>
       </div>
-
-      {/* Ações Rápidas */}
-      <Card className={cardClass}>
-        <CardHeader>
-          <CardTitle className={textPrimary}>Ações Rápidas</CardTitle>
-          <CardDescription className={textSecondary}>
-            Operações mais utilizadas
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-            <Button className="bg-amber-600 hover:bg-amber-700 text-white h-12">
-              <Package className="h-4 w-4 mr-2" />
-              Adicionar Item
-            </Button>
-            <Button
-              variant="outline"
-              className={`h-12 ${
-                theme === "dark"
-                  ? "border-gray-700 hover:bg-gray-800 text-gray-200"
-                  : "border-gray-300 hover:bg-gray-100 text-gray-700"
-              }`}
-            >
-              <ShoppingCart className="h-4 w-4 mr-2" />
-              Criar Pedido
-            </Button>
-            <Button
-              variant="outline"
-              className={`h-12 ${
-                theme === "dark"
-                  ? "border-gray-700 hover:bg-gray-800 text-gray-200"
-                  : "border-gray-300 hover:bg-gray-100 text-gray-700"
-              }`}
-            >
-              <Users className="h-4 w-4 mr-2" />
-              Novo Fornecedor
-            </Button>
-            <Button
-              variant="outline"
-              className={`h-12 ${
-                theme === "dark"
-                  ? "border-gray-700 hover:bg-gray-800 text-gray-200"
-                  : "border-gray-300 hover:bg-gray-100 text-gray-700"
-              }`}
-            >
-              <BarChart className="h-4 w-4 mr-2" />
-              Ver Relatórios
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }

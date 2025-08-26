@@ -9,8 +9,8 @@ const InventoryContext = createContext(undefined)
 const initialInventory = [
   {
     id: "1",
-    name: "Grãos Etíopes Yirgacheffe Premium",
-    category: "Grãos de Café",
+    name: "Smart Watch",
+    category: "Appliance",
     currentStock: 45,
     minStock: 20,
     maxStock: 150,
@@ -22,7 +22,7 @@ const initialInventory = [
     sku: "ETH-YIR-001",
     location: "Depósito A - Prateleira 1",
     barcode: "1234567890123",
-    description: "Café etíope de origem única com notas florais",
+    description: "Electric Smart Watch That Does Shit",
     image: "/images/coffee-beans-ethiopian.jpg",
     reorderPoint: 25,
     leadTime: 14,
@@ -31,7 +31,7 @@ const initialInventory = [
   {
     id: "2",
     name: "Café Colombiano Supremo Torra Escura",
-    category: "Grãos de Café",
+    category: "Appliance",
     currentStock: 12,
     minStock: 25,
     maxStock: 100,
@@ -52,7 +52,7 @@ const initialInventory = [
   {
     id: "3",
     name: "Café Brasileiro Santos Torra Média",
-    category: "Grãos de Café",
+    category: "Appliance",
     currentStock: 8,
     minStock: 20,
     maxStock: 80,
@@ -265,7 +265,7 @@ const initialSuppliers = [
     contact: "Sarah Mitchell",
     email: "sarah@highlandcoffee.com",
     phone: "(11) 3123-4567",
-    address: "Rua dos Grãos de Café, 2847, São Paulo, SP 01234-567",
+    address: "Rua dos Appliance, 2847, São Paulo, SP 01234-567",
     rating: 4.9,
     totalOrders: 67,
     lastOrderDate: "2024-01-20",
