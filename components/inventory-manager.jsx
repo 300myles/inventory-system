@@ -32,6 +32,7 @@ import {
   Clock,
   ImageIcon,
   PlusIcon,
+  Save,
 } from "lucide-react"
 import { useInventory } from "@/contexts/inventory-context"
 import { useTheme } from "@/contexts/theme-context"
@@ -80,7 +81,7 @@ export default function InventoryManager() {
     return matchesSearch && matchesCategory && matchesStatus
   })
 
-  const table = ["Image", "Item", "Category",	"Weight",	"Status",	"Description",	"Price",	"Weight",	"Actions"];
+  const table = ["Image", "Item", "Category",	"Status",	"Description",	"Price", "Actions"];
 
   const handleAddItem = (formData) => {
     const newItem = {
@@ -144,11 +145,8 @@ export default function InventoryManager() {
   }
 
   const getItemStatus = (item) => {
-    if (item.currentStock === 0) {
-      return { status: "Sem Estoque", color: "bg-red-900 text-red-300 border-red-700", icon: AlertTriangle }
-    }
     if (item.currentStock <= item.minStock) {
-      return { status: "Estoque Baixo", color: "bg-yellow-900 text-yellow-300 border-yellow-700", icon: TrendingDown }
+      return { status: "Out of Stock", color: "bg-red-900 text-red-300 border-red-700", icon: TrendingDown }
     }
     if (item.expiryDate) {
       const today = new Date()
@@ -158,7 +156,7 @@ export default function InventoryManager() {
         return { status: "Vencendo", color: "bg-orange-900 text-orange-300 border-orange-700", icon: Clock }
       }
     }
-    return { status: "Em Estoque", color: "bg-green-900 text-green-300 border-green-700", icon: Package }
+    return { status: "In Stock", color: "bg-green-900 text-green-300 border-green-700", icon: Package }
   }
 
   return (
@@ -250,15 +248,9 @@ export default function InventoryManager() {
                             <SelectItem value="Appliances">
                               Appliances
                             </SelectItem>
-                            <SelectItem value="Medicine">
-                              Medicine
-                            </SelectItem>
-                            <SelectItem value="Item1">
-                              Item1
-                            </SelectItem>
-                            <SelectItem value="Item2">
-                              Item2
-                            </SelectItem>
+                            <SelectItem value="Medicine">Medicine</SelectItem>
+                            <SelectItem value="Item1">Item1</SelectItem>
+                            <SelectItem value="Item2">Item2</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -267,6 +259,7 @@ export default function InventoryManager() {
                       <Label htmlFor="description" className="text-gray-200">
                         Description
                       </Label>
+            
                       <Textarea
                         id="description"
                         name="description"
@@ -274,8 +267,14 @@ export default function InventoryManager() {
                         placeholder="Item Description Here..."
                       />
                     </div>
-                  </div>
 
+                    <div className="space-y-2">
+                      <Label htmlFor="image" className="text-gray-200">
+                        Image
+                      </Label>
+                      <Input type="file" id="image" name="image" className="bg-gray-800 border-gray-700 text-gray-200" />
+                    </div>
+                  </div>
                 </div>
                 <DialogFooter>
                   <Button
@@ -289,7 +288,8 @@ export default function InventoryManager() {
                   <Button
                     type="submit"
                     className="bg-blue-600 hover:bg-blue-700"
-                  ><PlusIcon />
+                  >
+                    <PlusIcon />
                     Add Item
                   </Button>
                 </DialogFooter>
@@ -310,7 +310,11 @@ export default function InventoryManager() {
         <CardContent className="pt-6">
           <div className="flex gap-4 items-center flex-wrap">
             <div className="relative flex-1 max-w-sm">
-              <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${ theme === "dark" ? "text-gray-200" : "text-gray-800"}`} />
+              <Search
+                className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${
+                  theme === "dark" ? "text-gray-200" : "text-gray-800"
+                }`}
+              />
               <Input
                 placeholder="Search For Items..."
                 value={searchTerm}
@@ -384,7 +388,11 @@ export default function InventoryManager() {
         }`}
       >
         <CardHeader>
-          <CardTitle className={`flex items-center gap-2 ${theme === "dark" ? "text-gray-200" : "text-gray-800"}`}>
+          <CardTitle
+            className={`flex items-center gap-2 ${
+              theme === "dark" ? "text-gray-200" : "text-gray-800"
+            }`}
+          >
             <Package className="h-5 w-5" />
             Items in Inventory ({filteredInventory.length})
           </CardTitle>
@@ -394,10 +402,11 @@ export default function InventoryManager() {
             <Table>
               <TableHeader>
                 <TableRow className="border-gray-800">
-                {table?.map((item,id) => (
-                <TableHead key={id} className="text-gray-300">{item}</TableHead>
-                ))}
-                  
+                  {table?.map((item, id) => (
+                    <TableHead key={id} className="text-gray-300">
+                      {item}
+                    </TableHead>
+                  ))}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -407,7 +416,7 @@ export default function InventoryManager() {
                   const prediction7Days = getStockPrediction(item.id, 7);
                   const StatusIcon = itemStatus.icon;
 
-                  return (  
+                  return (
                     <TableRow
                       key={item.id}
                       className="border-gray-800 hover:bg-gray-800/50"
@@ -454,16 +463,6 @@ export default function InventoryManager() {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <div>
-                          <p className="font-medium text-gray-200">
-                            {item.currentStock} {item.unit}
-                          </p>
-                          <p className="text-sm text-gray-400">
-                            Mín: {item.minStock} | Máx: {item.maxStock}
-                          </p>
-                        </div>
-                      </TableCell>
-                      <TableCell>
                         <Badge variant="outline" className={itemStatus.color}>
                           <StatusIcon className="h-3 w-3 mr-1" />
                           {itemStatus.status}
@@ -473,18 +472,9 @@ export default function InventoryManager() {
                         {item.supplier}
                       </TableCell>
                       <TableCell className="text-gray-300">
-                        R${" "}
-                        {stockValue.toLocaleString("pt-BR", {
+                        &#8358; {stockValue.toLocaleString("pt-BR", {
                           minimumFractionDigits: 2,
                         })}
-                      </TableCell>
-                      <TableCell>
-                        <div>
-                          <p className="text-sm text-gray-300">
-                            {prediction7Days.toFixed(1)} {item.unit}
-                          </p>
-                          <p className="text-xs text-gray-500">em 7 dias</p>
-                        </div>
                       </TableCell>
                       <TableCell>
                         <div className="flex gap-2">
@@ -523,16 +513,13 @@ export default function InventoryManager() {
         </CardContent>
       </Card>
 
-      {/* Diálogo de Visualização de Item com Imagem Real */}
+      {/* Details Of Item Modal */}
       <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
         <DialogContent className="max-w-2xl bg-gray-900 border-gray-800">
           <DialogHeader>
             <DialogTitle className="text-gray-200">
-              Detalhes do Item
+              Details of Item
             </DialogTitle>
-            <DialogDescription className="text-gray-400">
-              Informações detalhadas sobre {viewingItem?.name}
-            </DialogDescription>
           </DialogHeader>
           {viewingItem && (
             <div className="space-y-6">
@@ -565,13 +552,13 @@ export default function InventoryManager() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label className="text-sm font-medium text-gray-300">
-                    SKU
+                    Item ID
                   </Label>
                   <p className="text-gray-200">{viewingItem.sku}</p>
                 </div>
                 <div>
                   <Label className="text-sm font-medium text-gray-300">
-                    Categoria
+                    Category
                   </Label>
                   <p className="text-gray-200">{viewingItem.category}</p>
                 </div>
@@ -682,322 +669,106 @@ export default function InventoryManager() {
         </DialogContent>
       </Dialog>
 
-      {/* Diálogo de Edição - Estrutura similar ao de Adicionar mas com valores padrão */}
+      {/* Edit Inventory Item*/}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-gray-900 border-gray-800">
-          <DialogHeader>
-            <DialogTitle className="text-gray-200">
-              Editar Item do Inventário
-            </DialogTitle>
-            <DialogDescription className="text-gray-400">
-              Atualize os detalhes deste item do inventário.
-            </DialogDescription>
-          </DialogHeader>
-          {editingItem && (
-            <form action={handleEditItem}>
-              <div className="grid gap-6 py-4">
-                {/* Estrutura similar ao formulário de adicionar mas com defaultValue */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium text-gray-200">
-                    Informações Básicas
-                  </h3>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="edit-name" className="text-gray-200">
-                        Nome do Item *
-                      </Label>
-                      <Input
-                        id="edit-name"
-                        name="name"
-                        defaultValue={editingItem.name}
-                        required
-                        className="bg-gray-800 border-gray-700 text-gray-200"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="edit-sku" className="text-gray-200">
-                        SKU *
-                      </Label>
-                      <Input
-                        id="edit-sku"
-                        name="sku"
-                        defaultValue={editingItem.sku}
-                        required
-                        className="bg-gray-800 border-gray-700 text-gray-200"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="edit-barcode" className="text-gray-200">
-                        Código de Barras
-                      </Label>
-                      <Input
-                        id="edit-barcode"
-                        name="barcode"
-                        defaultValue={editingItem.barcode}
-                        className="bg-gray-800 border-gray-700 text-gray-200"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="edit-category" className="text-gray-200">
-                        Categoria *
-                      </Label>
-                      <Select
-                        name="category"
-                        defaultValue={editingItem.category}
-                        required
-                      >
-                        <SelectTrigger className="bg-gray-800 border-gray-700 text-gray-200">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="bg-gray-800 border-gray-700">
-                          <SelectItem value="Grãos de Café">
-                            Grãos de Café
-                          </SelectItem>
-                          <SelectItem value="Suprimentos">
-                            Suprimentos
-                          </SelectItem>
-                          <SelectItem value="Laticínios">Laticínios</SelectItem>
-                          <SelectItem value="Equipamentos">
-                            Equipamentos
-                          </SelectItem>
-                          <SelectItem value="Xaropes">Xaropes</SelectItem>
-                          <SelectItem value="Padaria">Padaria</SelectItem>
-                          <SelectItem value="Temperos">Temperos</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="edit-description" className="text-gray-200">
-                      Descrição
-                    </Label>
-                    <Textarea
-                      id="edit-description"
-                      name="description"
-                      defaultValue={editingItem.description}
-                      className="bg-gray-800 border-gray-700 text-gray-200"
-                    />
-                  </div>
-                </div>
-
-                {/* Informações de Estoque */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium text-gray-200">
-                    Informações de Estoque
-                  </h3>
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="space-y-2">
-                      <Label
-                        htmlFor="edit-currentStock"
-                        className="text-gray-200"
-                      >
-                        Estoque Atual *
-                      </Label>
-                      <Input
-                        id="edit-currentStock"
-                        name="currentStock"
-                        type="number"
-                        defaultValue={editingItem.currentStock}
-                        required
-                        className="bg-gray-800 border-gray-700 text-gray-200"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="edit-minStock" className="text-gray-200">
-                        Estoque Mínimo *
-                      </Label>
-                      <Input
-                        id="edit-minStock"
-                        name="minStock"
-                        type="number"
-                        defaultValue={editingItem.minStock}
-                        required
-                        className="bg-gray-800 border-gray-700 text-gray-200"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="edit-maxStock" className="text-gray-200">
-                        Estoque Máximo *
-                      </Label>
-                      <Input
-                        id="edit-maxStock"
-                        name="maxStock"
-                        type="number"
-                        defaultValue={editingItem.maxStock}
-                        required
-                        className="bg-gray-800 border-gray-700 text-gray-200"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label
-                        htmlFor="edit-reorderPoint"
-                        className="text-gray-200"
-                      >
-                        Ponto de Reposição *
-                      </Label>
-                      <Input
-                        id="edit-reorderPoint"
-                        name="reorderPoint"
-                        type="number"
-                        defaultValue={editingItem.reorderPoint}
-                        required
-                        className="bg-gray-800 border-gray-700 text-gray-200"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="edit-unit" className="text-gray-200">
-                        Unidade *
-                      </Label>
-                      <Select
-                        name="unit"
-                        defaultValue={editingItem.unit}
-                        required
-                      >
-                        <SelectTrigger className="bg-gray-800 border-gray-700 text-gray-200">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="bg-gray-800 border-gray-700">
-                          <SelectItem value="kg">kg</SelectItem>
-                          <SelectItem value="unidades">unidades</SelectItem>
-                          <SelectItem value="litros">litros</SelectItem>
-                          <SelectItem value="caixas">caixas</SelectItem>
-                          <SelectItem value="frascos">frascos</SelectItem>
-                          <SelectItem value="potes">potes</SelectItem>
-                          <SelectItem value="sacos">sacos</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label
-                        htmlFor="edit-avgDailyUsage"
-                        className="text-gray-200"
-                      >
-                        Uso Médio Diário
-                      </Label>
-                      <Input
-                        id="edit-avgDailyUsage"
-                        name="avgDailyUsage"
-                        type="number"
-                        step="0.1"
-                        defaultValue={editingItem.avgDailyUsage}
-                        className="bg-gray-800 border-gray-700 text-gray-200"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Informações de Fornecedor e Custo */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium text-gray-200">
-                    Informações de Fornecedor e Custo
-                  </h3>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="edit-supplier" className="text-gray-200">
-                        Fornecedor *
-                      </Label>
-                      <Select
-                        name="supplier"
-                        defaultValue={editingItem.supplier}
-                        required
-                      >
-                        <SelectTrigger className="bg-gray-800 border-gray-700 text-gray-200">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="bg-gray-800 border-gray-700">
-                          {suppliers.map((supplier) => (
-                            <SelectItem key={supplier.id} value={supplier.name}>
-                              {supplier.name}
+            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-gray-900 border-gray-800">
+              <DialogHeader>
+                <DialogTitle className="text-gray-200">
+                 Edit Item
+                </DialogTitle>
+                <DialogDescription className="text-gray-400">
+                  Edit Item Details
+                </DialogDescription>
+              </DialogHeader>
+              <form action={handleAddItem}>
+                <div className="grid gap-6 py-4">
+                  {/* Informações Básicas */}
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="name" className="text-gray-200">
+                          Name of Item *
+                        </Label>
+                        <Input
+                          id="name"
+                          name="name"
+                          required
+                          className="bg-gray-800 border-gray-700 text-gray-200"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="sku" className="text-gray-200">
+                          Price *
+                        </Label>
+                        <Input
+                          id="sku"
+                          name="sku"
+                          required
+                          className="bg-gray-800 border-gray-700 text-gray-200"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="barcode" className="text-gray-200">
+                          Quantity
+                        </Label>
+                        <Input
+                          id="barcode"
+                          name="barcode"
+                          className="bg-gray-800 border-gray-700 text-gray-200"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="category" className="text-gray-200">
+                          Category *
+                        </Label>
+                        <Select name="category" required>
+                          <SelectTrigger className="bg-gray-800 border-gray-700 text-gray-200">
+                            <SelectValue placeholder="Select Category" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-gray-800 border-gray-700">
+                            <SelectItem value="Appliances">
+                              Appliances
                             </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                            <SelectItem value="Medicine">Medicine</SelectItem>
+                            <SelectItem value="Item1">Item1</SelectItem>
+                            <SelectItem value="Item2">Item2</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
                     <div className="space-y-2">
-                      <Label
-                        htmlFor="edit-costPerUnit"
-                        className="text-gray-200"
-                      >
-                        Custo por Unidade (R$) *
+                      <Label htmlFor="description" className="text-gray-200">
+                        Description
                       </Label>
-                      <Input
-                        id="edit-costPerUnit"
-                        name="costPerUnit"
-                        type="number"
-                        step="0.01"
-                        defaultValue={editingItem.costPerUnit}
-                        required
+            
+                      <Textarea
+                        id="description"
+                        name="description"
                         className="bg-gray-800 border-gray-700 text-gray-200"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="edit-leadTime" className="text-gray-200">
-                        Tempo de Entrega (dias)
-                      </Label>
-                      <Input
-                        id="edit-leadTime"
-                        name="leadTime"
-                        type="number"
-                        defaultValue={editingItem.leadTime}
-                        className="bg-gray-800 border-gray-700 text-gray-200"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label
-                        htmlFor="edit-expiryDate"
-                        className="text-gray-200"
-                      >
-                        Data de Vencimento
-                      </Label>
-                      <Input
-                        id="edit-expiryDate"
-                        name="expiryDate"
-                        type="date"
-                        defaultValue={editingItem.expiryDate}
-                        className="bg-gray-800 border-gray-700 text-gray-200"
+                        placeholder="Item Description Here..."
                       />
                     </div>
                   </div>
                 </div>
-
-                {/* Informações de Localização */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium text-gray-200">
-                    Informações de Localização
-                  </h3>
-                  <div className="space-y-2">
-                    <Label htmlFor="edit-location" className="text-gray-200">
-                      Local de Armazenamento *
-                    </Label>
-                    <Input
-                      id="edit-location"
-                      name="location"
-                      defaultValue={editingItem.location}
-                      required
-                      className="bg-gray-800 border-gray-700 text-gray-200"
-                    />
-                  </div>
-                </div>
-              </div>
-              <DialogFooter>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setIsEditDialogOpen(false)}
-                  className="border-gray-700 hover:bg-gray-800 text-gray-200"
-                >
-                  Cancelar
-                </Button>
-                <Button
-                  type="submit"
-                  className="bg-amber-600 hover:bg-amber-700"
-                >
-                  Atualizar Item
-                </Button>
-              </DialogFooter>
-            </form>
-          )}
-        </DialogContent>
+                <DialogFooter>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setIsAddDialogOpen(false)}
+                    className="border-gray-700 hover:bg-gray-800 text-gray-200"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    className="bg-blue-600 cursor-pointer hover:bg-blue-700"
+                  >
+                    <Save />
+                    Save Changes
+                  </Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
       </Dialog>
     </div>
   );
