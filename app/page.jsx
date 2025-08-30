@@ -70,7 +70,7 @@ function ElaboratedCoffeeLogo({ size = "large" }) {
 }
 
 function OliverCoffeeInventorySystemContent() {
-  const { theme } = useTheme()
+  const { theme } = useTheme();
 
   const exportData = () => {
     // Funcionalidade de exportação de dados
@@ -247,7 +247,7 @@ function OliverCoffeeInventorySystemContent() {
       </main>
 
       <footer
-        className={`border-t mt-12 transition-colors duration-300 ${
+        className={`border-t mt-12 md:transition-colors duration-300 ${
           theme === "dark"
             ? "bg-gray-900 border-gray-800"
             : "bg-white border-gray-200"

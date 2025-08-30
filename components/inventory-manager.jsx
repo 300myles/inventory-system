@@ -31,12 +31,17 @@ import {
   TrendingDown,
   Clock,
   ImageIcon,
+  PlusIcon,
 } from "lucide-react"
 import { useInventory } from "@/contexts/inventory-context"
+import { useTheme } from "@/contexts/theme-context"
 
 export default function InventoryManager() {
   const { inventory, suppliers, addInventoryItem, updateInventoryItem, deleteInventoryItem, getStockPrediction } =
     useInventory()
+
+    const { theme } = useTheme()
+
   const [searchTerm, setSearchTerm] = useState("")
   const [categoryFilter, setCategoryFilter] = useState("all")
   const [statusFilter, setStatusFilter] = useState("all")
@@ -74,6 +79,8 @@ export default function InventoryManager() {
 
     return matchesSearch && matchesCategory && matchesStatus
   })
+
+  const table = ["Image", "Item", "Category",	"Weight",	"Status",	"Description",	"Price",	"Weight",	"Actions"];
 
   const handleAddItem = (formData) => {
     const newItem = {
@@ -159,11 +166,22 @@ export default function InventoryManager() {
       {/* Cabeçalho */}
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-black dark:text-gray-200">Inventory</h2>
+          <h2
+            className={`text-2xl font-bold ${
+              theme === "dark" ? "text-gray-200" : "text-gray-800"
+            }`}
+          >
+            Inventory
+          </h2>
           <p className="{textSecondary}">Comprehensive Inventory Overview</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="border-gray-700 hover:bg-gray-800 hover:cursor-pointer text-black hover:text-gray-200 dark:text-gray-200 bg-transparent">
+          <Button
+            variant="outline"
+            className={`border-gray-700 hover:bg-gray-800 hover:cursor-pointer hover:text-gray-200 bg-transparent ${
+              theme === "dark" ? "text-gray-200" : "text-gray-800"
+            }`}
+          >
             <Scan className="h-4 w-4 mr-2" />
             Expand View
           </Button>
@@ -176,229 +194,88 @@ export default function InventoryManager() {
             </DialogTrigger>
             <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-gray-900 border-gray-800">
               <DialogHeader>
-                <DialogTitle className="text-gray-200">Adicionar Novo Item do Inventário</DialogTitle>
+                <DialogTitle className="text-gray-200">
+                  Add Item to Inventory
+                </DialogTitle>
                 <DialogDescription className="text-gray-400">
-                  Insira os detalhes para o novo item do inventário.
+                  Insert Details of Item
                 </DialogDescription>
               </DialogHeader>
               <form action={handleAddItem}>
                 <div className="grid gap-6 py-4">
                   {/* Informações Básicas */}
                   <div className="space-y-4">
-                    <h3 className="text-lg font-medium text-gray-200">Informações Básicas</h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="name" className="text-gray-200">
-                          Nome do Item *
+                          Name of Item *
                         </Label>
-                        <Input id="name" name="name" required className="bg-gray-800 border-gray-700 text-gray-200" />
+                        <Input
+                          id="name"
+                          name="name"
+                          required
+                          className="bg-gray-800 border-gray-700 text-gray-200"
+                        />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="sku" className="text-gray-200">
-                          SKU *
+                          Price *
                         </Label>
-                        <Input id="sku" name="sku" required className="bg-gray-800 border-gray-700 text-gray-200" />
+                        <Input
+                          id="sku"
+                          name="sku"
+                          required
+                          className="bg-gray-800 border-gray-700 text-gray-200"
+                        />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="barcode" className="text-gray-200">
-                          Código de Barras
+                          Quantity
                         </Label>
-                        <Input id="barcode" name="barcode" className="bg-gray-800 border-gray-700 text-gray-200" />
+                        <Input
+                          id="barcode"
+                          name="barcode"
+                          className="bg-gray-800 border-gray-700 text-gray-200"
+                        />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="category" className="text-gray-200">
-                          Categoria *
+                          Category *
                         </Label>
                         <Select name="category" required>
                           <SelectTrigger className="bg-gray-800 border-gray-700 text-gray-200">
-                            <SelectValue placeholder="Selecionar categoria" />
+                            <SelectValue placeholder="Select Category" />
                           </SelectTrigger>
                           <SelectContent className="bg-gray-800 border-gray-700">
-                            <SelectItem value="Grãos de Café">Grãos de Café</SelectItem>
-                            <SelectItem value="Suprimentos">Suprimentos</SelectItem>
-                            <SelectItem value="Laticínios">Laticínios</SelectItem>
-                            <SelectItem value="Equipamentos">Equipamentos</SelectItem>
-                            <SelectItem value="Xaropes">Xaropes</SelectItem>
-                            <SelectItem value="Padaria">Padaria</SelectItem>
-                            <SelectItem value="Temperos">Temperos</SelectItem>
+                            <SelectItem value="Appliances">
+                              Appliances
+                            </SelectItem>
+                            <SelectItem value="Medicine">
+                              Medicine
+                            </SelectItem>
+                            <SelectItem value="Item1">
+                              Item1
+                            </SelectItem>
+                            <SelectItem value="Item2">
+                              Item2
+                            </SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="description" className="text-gray-200">
-                        Descrição
+                        Description
                       </Label>
                       <Textarea
                         id="description"
                         name="description"
                         className="bg-gray-800 border-gray-700 text-gray-200"
-                        placeholder="Breve descrição do item..."
+                        placeholder="Item Description Here..."
                       />
                     </div>
                   </div>
 
-                  {/* Informações de Estoque */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium text-gray-200">Informações de Estoque</h3>
-                    <div className="grid grid-cols-3 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="currentStock" className="text-gray-200">
-                          Estoque Atual *
-                        </Label>
-                        <Input
-                          id="currentStock"
-                          name="currentStock"
-                          type="number"
-                          required
-                          className="bg-gray-800 border-gray-700 text-gray-200"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="minStock" className="text-gray-200">
-                          Estoque Mínimo *
-                        </Label>
-                        <Input
-                          id="minStock"
-                          name="minStock"
-                          type="number"
-                          required
-                          className="bg-gray-800 border-gray-700 text-gray-200"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="maxStock" className="text-gray-200">
-                          Estoque Máximo *
-                        </Label>
-                        <Input
-                          id="maxStock"
-                          name="maxStock"
-                          type="number"
-                          required
-                          className="bg-gray-800 border-gray-700 text-gray-200"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="reorderPoint" className="text-gray-200">
-                          Ponto de Reposição *
-                        </Label>
-                        <Input
-                          id="reorderPoint"
-                          name="reorderPoint"
-                          type="number"
-                          required
-                          className="bg-gray-800 border-gray-700 text-gray-200"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="unit" className="text-gray-200">
-                          Unidade *
-                        </Label>
-                        <Select name="unit" required>
-                          <SelectTrigger className="bg-gray-800 border-gray-700 text-gray-200">
-                            <SelectValue placeholder="Selecionar unidade" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-gray-800 border-gray-700">
-                            <SelectItem value="kg">kg</SelectItem>
-                            <SelectItem value="unidades">unidades</SelectItem>
-                            <SelectItem value="litros">litros</SelectItem>
-                            <SelectItem value="caixas">caixas</SelectItem>
-                            <SelectItem value="frascos">frascos</SelectItem>
-                            <SelectItem value="potes">potes</SelectItem>
-                            <SelectItem value="sacos">sacos</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="avgDailyUsage" className="text-gray-200">
-                          Uso Médio Diário
-                        </Label>
-                        <Input
-                          id="avgDailyUsage"
-                          name="avgDailyUsage"
-                          type="number"
-                          step="0.1"
-                          className="bg-gray-800 border-gray-700 text-gray-200"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Informações de Fornecedor e Custo */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium text-gray-200">Informações de Fornecedor e Custo</h3>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="supplier" className="text-gray-200">
-                          Fornecedor *
-                        </Label>
-                        <Select name="supplier" required>
-                          <SelectTrigger className="bg-gray-800 border-gray-700 text-gray-200">
-                            <SelectValue placeholder="Selecionar fornecedor" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-gray-800 border-gray-700">
-                            {suppliers.map((supplier) => (
-                              <SelectItem key={supplier.id} value={supplier.name}>
-                                {supplier.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="costPerUnit" className="text-gray-200">
-                          Custo por Unidade (R$) *
-                        </Label>
-                        <Input
-                          id="costPerUnit"
-                          name="costPerUnit"
-                          type="number"
-                          step="0.01"
-                          required
-                          className="bg-gray-800 border-gray-700 text-gray-200"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="leadTime" className="text-gray-200">
-                          Tempo de Entrega (dias)
-                        </Label>
-                        <Input
-                          id="leadTime"
-                          name="leadTime"
-                          type="number"
-                          className="bg-gray-800 border-gray-700 text-gray-200"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="expiryDate" className="text-gray-200">
-                          Data de Vencimento
-                        </Label>
-                        <Input
-                          id="expiryDate"
-                          name="expiryDate"
-                          type="date"
-                          className="bg-gray-800 border-gray-700 text-gray-200"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Informações de Localização */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium text-gray-200">Informações de Localização</h3>
-                    <div className="space-y-2">
-                      <Label htmlFor="location" className="text-gray-200">
-                        Local de Armazenamento *
-                      </Label>
-                      <Input
-                        id="location"
-                        name="location"
-                        required
-                        className="bg-gray-800 border-gray-700 text-gray-200"
-                        placeholder="ex: Depósito A - Prateleira 1"
-                      />
-                    </div>
-                  </div>
                 </div>
                 <DialogFooter>
                   <Button
@@ -407,10 +284,13 @@ export default function InventoryManager() {
                     onClick={() => setIsAddDialogOpen(false)}
                     className="border-gray-700 hover:bg-gray-800 text-gray-200"
                   >
-                    Cancelar
+                    Cancel
                   </Button>
-                  <Button type="submit" className="bg-amber-600 hover:bg-amber-700">
-                    Adicionar Item
+                  <Button
+                    type="submit"
+                    className="bg-blue-600 hover:bg-blue-700"
+                  ><PlusIcon />
+                    Add Item
                   </Button>
                 </DialogFooter>
               </form>
@@ -420,25 +300,47 @@ export default function InventoryManager() {
       </div>
 
       {/* Filtros */}
-      <Card className="bg-gray-900 border-gray-800">
+      <Card
+        className={` ${
+          theme === "dark"
+            ? "bg-gray-800 border-gray-800"
+            : "bg-transparent border-gray-200"
+        }`}
+      >
         <CardContent className="pt-6">
           <div className="flex gap-4 items-center flex-wrap">
             <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${ theme === "dark" ? "text-gray-200" : "text-gray-800"}`} />
               <Input
                 placeholder="Search For Items..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 bg-gray-800   border-gray-700 text-gray-200"
+                className={`pl-10  ${
+                  theme === "dark"
+                    ? "bg-gray-800 border-gray-700 text-gray-200"
+                    : "bg-transparent border-gray-400 text-gray-800 placeholder-gray-800"
+                }`}
               />
             </div>
             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-              <SelectTrigger className="w-48 bg-gray-800 border-gray-700 text-gray-200">
+              <SelectTrigger
+                className={`w-48 ${
+                  theme === "dark"
+                    ? "bg-gray-800 border-gray-700 text-gray-200"
+                    : "bg-transparent border-gray-400 text-gray-800"
+                }`}
+              >
                 <Filter className="h-4 w-4 mr-2" />
                 <SelectValue placeholder="Filtrar por categoria" />
               </SelectTrigger>
-              <SelectContent className="bg-gray-800 border-gray-700">
-                <SelectItem value="all">Todas as Categorias</SelectItem>
+              <SelectContent
+                className={`${
+                  theme === "dark"
+                    ? "bg-gray-800 border-gray-700"
+                    : "bg-white border-gray-400"
+                }`}
+              >
+                <SelectItem value="all">Today's Category</SelectItem>
                 {categories.map((category) => (
                   <SelectItem key={category} value={category}>
                     {category}
@@ -447,11 +349,23 @@ export default function InventoryManager() {
               </SelectContent>
             </Select>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-48 bg-gray-800 border-gray-700 text-gray-200">
+              <SelectTrigger
+                className={`w-48 ${
+                  theme === "dark"
+                    ? "bg-gray-800 border-gray-700 text-gray-200"
+                    : "bg-transparent border-gray-400 text-gray-800"
+                }`}
+              >
                 <SelectValue placeholder="Filtrar por status" />
               </SelectTrigger>
-              <SelectContent className="bg-gray-800 border-gray-700">
-                <SelectItem value="all">Todos os Status</SelectItem>
+              <SelectContent
+                className={`${
+                  theme === "dark"
+                    ? "bg-gray-800 border-gray-700"
+                    : "bg-white border-gray-400"
+                }`}
+              >
+                <SelectItem value="all">Today's Status</SelectItem>
                 <SelectItem value="low_stock">Estoque Baixo</SelectItem>
                 <SelectItem value="out_of_stock">Sem Estoque</SelectItem>
                 <SelectItem value="expiring">Vencendo</SelectItem>
@@ -461,10 +375,16 @@ export default function InventoryManager() {
         </CardContent>
       </Card>
 
-      {/* Tabela de Inventário com Imagens Reais */}
-      <Card className="bg-gray-900 border-gray-800">
+      {/* Inventory Table */}
+      <Card
+        className={`${
+          theme === "dark"
+            ? "bg-gray-900 border-gray-800"
+            : "bg-transparent border-gray-200"
+        }`}
+      >
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-gray-200">
+          <CardTitle className={`flex items-center gap-2 ${theme === "dark" ? "text-gray-200" : "text-gray-800"}`}>
             <Package className="h-5 w-5" />
             Items in Inventory ({filteredInventory.length})
           </CardTitle>
@@ -474,26 +394,24 @@ export default function InventoryManager() {
             <Table>
               <TableHeader>
                 <TableRow className="border-gray-800">
-                  <TableHead className="text-gray-300">Image</TableHead>
-                  <TableHead className="text-gray-300">Item</TableHead>
-                  <TableHead className="text-gray-300">Category</TableHead>
-                  <TableHead className="text-gray-300">Weight</TableHead>
-                  <TableHead className="text-gray-300">Status</TableHead>
-                  <TableHead className="text-gray-300">Description</TableHead>
-                  <TableHead className="text-gray-300">Price</TableHead>
-                  <TableHead className="text-gray-300">Weight</TableHead>
-                  <TableHead className="text-gray-300">Actions</TableHead>
+                {table?.map((item,id) => (
+                <TableHead key={id} className="text-gray-300">{item}</TableHead>
+                ))}
+                  
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredInventory.map((item) => {
-                  const itemStatus = getItemStatus(item)
-                  const stockValue = item.currentStock * item.costPerUnit
-                  const prediction7Days = getStockPrediction(item.id, 7)
-                  const StatusIcon = itemStatus.icon
+                  const itemStatus = getItemStatus(item);
+                  const stockValue = item.currentStock * item.costPerUnit;
+                  const prediction7Days = getStockPrediction(item.id, 7);
+                  const StatusIcon = itemStatus.icon;
 
-                  return (
-                    <TableRow key={item.id} className="border-gray-800 hover:bg-gray-800/50">
+                  return (  
+                    <TableRow
+                      key={item.id}
+                      className="border-gray-800 hover:bg-gray-800/50"
+                    >
                       <TableCell>
                         <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-800 border border-gray-700 shadow-lg">
                           {item.image ? (
@@ -502,8 +420,9 @@ export default function InventoryManager() {
                               alt={item.name}
                               className="w-full h-full object-cover hover:scale-105 transition-transform duration-200"
                               onError={(e) => {
-                                const target = e.target
-                                target.src = "/placeholder.svg?height=64&width=64"
+                                const target = e.target;
+                                target.src =
+                                  "/placeholder.svg?height=64&width=64";
                               }}
                             />
                           ) : (
@@ -515,13 +434,22 @@ export default function InventoryManager() {
                       </TableCell>
                       <TableCell>
                         <div>
-                          <p className="font-medium text-gray-200">{item.name}</p>
+                          <p className="font-medium text-gray-200">
+                            {item.name}
+                          </p>
                           <p className="text-sm text-gray-400">{item.sku}</p>
-                          {item.barcode && <p className="text-xs text-gray-500">Código: {item.barcode}</p>}
+                          {item.barcode && (
+                            <p className="text-xs text-gray-500">
+                              Código: {item.barcode}
+                            </p>
+                          )}
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline" className="border-gray-700 text-gray-300">
+                        <Badge
+                          variant="outline"
+                          className="border-gray-700 text-gray-300"
+                        >
                           {item.category}
                         </Badge>
                       </TableCell>
@@ -541,9 +469,14 @@ export default function InventoryManager() {
                           {itemStatus.status}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-gray-300">{item.supplier}</TableCell>
                       <TableCell className="text-gray-300">
-                        R$ {stockValue.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+                        {item.supplier}
+                      </TableCell>
+                      <TableCell className="text-gray-300">
+                        R${" "}
+                        {stockValue.toLocaleString("pt-BR", {
+                          minimumFractionDigits: 2,
+                        })}
                       </TableCell>
                       <TableCell>
                         <div>
@@ -582,7 +515,7 @@ export default function InventoryManager() {
                         </div>
                       </TableCell>
                     </TableRow>
-                  )
+                  );
                 })}
               </TableBody>
             </Table>
@@ -594,7 +527,9 @@ export default function InventoryManager() {
       <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
         <DialogContent className="max-w-2xl bg-gray-900 border-gray-800">
           <DialogHeader>
-            <DialogTitle className="text-gray-200">Detalhes do Item</DialogTitle>
+            <DialogTitle className="text-gray-200">
+              Detalhes do Item
+            </DialogTitle>
             <DialogDescription className="text-gray-400">
               Informações detalhadas sobre {viewingItem?.name}
             </DialogDescription>
@@ -609,8 +544,8 @@ export default function InventoryManager() {
                       alt={viewingItem.name}
                       className="w-full h-full object-cover"
                       onError={(e) => {
-                        const target = e.target
-                        target.src = "/placeholder.svg?height=96&width=96"
+                        const target = e.target;
+                        target.src = "/placeholder.svg?height=96&width=96";
                       }}
                     />
                   ) : (
@@ -620,83 +555,127 @@ export default function InventoryManager() {
                   )}
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-gray-200">{viewingItem.name}</h3>
+                  <h3 className="text-xl font-bold text-gray-200">
+                    {viewingItem.name}
+                  </h3>
                   <p className="text-gray-400">{viewingItem.description}</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-sm font-medium text-gray-300">SKU</Label>
+                  <Label className="text-sm font-medium text-gray-300">
+                    SKU
+                  </Label>
                   <p className="text-gray-200">{viewingItem.sku}</p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-gray-300">Categoria</Label>
+                  <Label className="text-sm font-medium text-gray-300">
+                    Categoria
+                  </Label>
                   <p className="text-gray-200">{viewingItem.category}</p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-gray-300">Fornecedor</Label>
+                  <Label className="text-sm font-medium text-gray-300">
+                    Fornecedor
+                  </Label>
                   <p className="text-gray-200">{viewingItem.supplier}</p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-gray-300">Estoque Atual</Label>
+                  <Label className="text-sm font-medium text-gray-300">
+                    Estoque Atual
+                  </Label>
                   <p className="text-gray-200">
                     {viewingItem.currentStock} {viewingItem.unit}
                   </p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-gray-300">Custo por Unidade</Label>
-                  <p className="text-gray-200">
-                    R$ {viewingItem.costPerUnit.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
-                  </p>
-                </div>
-                <div>
-                  <Label className="text-sm font-medium text-gray-300">Valor Total</Label>
+                  <Label className="text-sm font-medium text-gray-300">
+                    Custo por Unidade
+                  </Label>
                   <p className="text-gray-200">
                     R${" "}
-                    {(viewingItem.currentStock * viewingItem.costPerUnit).toLocaleString("pt-BR", {
+                    {viewingItem.costPerUnit.toLocaleString("pt-BR", {
                       minimumFractionDigits: 2,
                     })}
                   </p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-gray-300">Localização</Label>
+                  <Label className="text-sm font-medium text-gray-300">
+                    Valor Total
+                  </Label>
+                  <p className="text-gray-200">
+                    R${" "}
+                    {(
+                      viewingItem.currentStock * viewingItem.costPerUnit
+                    ).toLocaleString("pt-BR", {
+                      minimumFractionDigits: 2,
+                    })}
+                  </p>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium text-gray-300">
+                    Localização
+                  </Label>
                   <p className="text-gray-200">{viewingItem.location}</p>
                 </div>
                 {viewingItem.expiryDate && (
                   <div>
-                    <Label className="text-sm font-medium text-gray-300">Data de Vencimento</Label>
-                    <p className="text-gray-200">{new Date(viewingItem.expiryDate).toLocaleDateString("pt-BR")}</p>
+                    <Label className="text-sm font-medium text-gray-300">
+                      Data de Vencimento
+                    </Label>
+                    <p className="text-gray-200">
+                      {new Date(viewingItem.expiryDate).toLocaleDateString(
+                        "pt-BR"
+                      )}
+                    </p>
                   </div>
                 )}
                 <div>
-                  <Label className="text-sm font-medium text-gray-300">Última Reposição</Label>
-                  <p className="text-gray-200">{new Date(viewingItem.lastRestocked).toLocaleDateString("pt-BR")}</p>
+                  <Label className="text-sm font-medium text-gray-300">
+                    Última Reposição
+                  </Label>
+                  <p className="text-gray-200">
+                    {new Date(viewingItem.lastRestocked).toLocaleDateString(
+                      "pt-BR"
+                    )}
+                  </p>
                 </div>
               </div>
 
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <Label className="text-sm font-medium text-gray-300">Previsão 7 Dias</Label>
+                  <Label className="text-sm font-medium text-gray-300">
+                    Previsão 7 Dias
+                  </Label>
                   <p className="text-gray-200">
-                    {getStockPrediction(viewingItem.id, 7).toFixed(1)} {viewingItem.unit}
+                    {getStockPrediction(viewingItem.id, 7).toFixed(1)}{" "}
+                    {viewingItem.unit}
                   </p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-gray-300">Previsão 30 Dias</Label>
+                  <Label className="text-sm font-medium text-gray-300">
+                    Previsão 30 Dias
+                  </Label>
                   <p className="text-gray-200">
-                    {getStockPrediction(viewingItem.id, 30).toFixed(1)} {viewingItem.unit}
+                    {getStockPrediction(viewingItem.id, 30).toFixed(1)}{" "}
+                    {viewingItem.unit}
                   </p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-gray-300">Tempo de Entrega</Label>
+                  <Label className="text-sm font-medium text-gray-300">
+                    Tempo de Entrega
+                  </Label>
                   <p className="text-gray-200">{viewingItem.leadTime} dias</p>
                 </div>
               </div>
             </div>
           )}
           <DialogFooter>
-            <Button onClick={() => setIsViewDialogOpen(false)} className="bg-amber-600 hover:bg-amber-700">
+            <Button
+              onClick={() => setIsViewDialogOpen(false)}
+              className="bg-amber-600 hover:bg-amber-700"
+            >
               Fechar
             </Button>
           </DialogFooter>
@@ -707,7 +686,9 @@ export default function InventoryManager() {
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-gray-900 border-gray-800">
           <DialogHeader>
-            <DialogTitle className="text-gray-200">Editar Item do Inventário</DialogTitle>
+            <DialogTitle className="text-gray-200">
+              Editar Item do Inventário
+            </DialogTitle>
             <DialogDescription className="text-gray-400">
               Atualize os detalhes deste item do inventário.
             </DialogDescription>
@@ -717,7 +698,9 @@ export default function InventoryManager() {
               <div className="grid gap-6 py-4">
                 {/* Estrutura similar ao formulário de adicionar mas com defaultValue */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium text-gray-200">Informações Básicas</h3>
+                  <h3 className="text-lg font-medium text-gray-200">
+                    Informações Básicas
+                  </h3>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="edit-name" className="text-gray-200">
@@ -758,15 +741,25 @@ export default function InventoryManager() {
                       <Label htmlFor="edit-category" className="text-gray-200">
                         Categoria *
                       </Label>
-                      <Select name="category" defaultValue={editingItem.category} required>
+                      <Select
+                        name="category"
+                        defaultValue={editingItem.category}
+                        required
+                      >
                         <SelectTrigger className="bg-gray-800 border-gray-700 text-gray-200">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent className="bg-gray-800 border-gray-700">
-                          <SelectItem value="Grãos de Café">Grãos de Café</SelectItem>
-                          <SelectItem value="Suprimentos">Suprimentos</SelectItem>
+                          <SelectItem value="Grãos de Café">
+                            Grãos de Café
+                          </SelectItem>
+                          <SelectItem value="Suprimentos">
+                            Suprimentos
+                          </SelectItem>
                           <SelectItem value="Laticínios">Laticínios</SelectItem>
-                          <SelectItem value="Equipamentos">Equipamentos</SelectItem>
+                          <SelectItem value="Equipamentos">
+                            Equipamentos
+                          </SelectItem>
                           <SelectItem value="Xaropes">Xaropes</SelectItem>
                           <SelectItem value="Padaria">Padaria</SelectItem>
                           <SelectItem value="Temperos">Temperos</SelectItem>
@@ -789,10 +782,15 @@ export default function InventoryManager() {
 
                 {/* Informações de Estoque */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium text-gray-200">Informações de Estoque</h3>
+                  <h3 className="text-lg font-medium text-gray-200">
+                    Informações de Estoque
+                  </h3>
                   <div className="grid grid-cols-3 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="edit-currentStock" className="text-gray-200">
+                      <Label
+                        htmlFor="edit-currentStock"
+                        className="text-gray-200"
+                      >
                         Estoque Atual *
                       </Label>
                       <Input
@@ -831,7 +829,10 @@ export default function InventoryManager() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="edit-reorderPoint" className="text-gray-200">
+                      <Label
+                        htmlFor="edit-reorderPoint"
+                        className="text-gray-200"
+                      >
                         Ponto de Reposição *
                       </Label>
                       <Input
@@ -847,7 +848,11 @@ export default function InventoryManager() {
                       <Label htmlFor="edit-unit" className="text-gray-200">
                         Unidade *
                       </Label>
-                      <Select name="unit" defaultValue={editingItem.unit} required>
+                      <Select
+                        name="unit"
+                        defaultValue={editingItem.unit}
+                        required
+                      >
                         <SelectTrigger className="bg-gray-800 border-gray-700 text-gray-200">
                           <SelectValue />
                         </SelectTrigger>
@@ -863,7 +868,10 @@ export default function InventoryManager() {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="edit-avgDailyUsage" className="text-gray-200">
+                      <Label
+                        htmlFor="edit-avgDailyUsage"
+                        className="text-gray-200"
+                      >
                         Uso Médio Diário
                       </Label>
                       <Input
@@ -880,13 +888,19 @@ export default function InventoryManager() {
 
                 {/* Informações de Fornecedor e Custo */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium text-gray-200">Informações de Fornecedor e Custo</h3>
+                  <h3 className="text-lg font-medium text-gray-200">
+                    Informações de Fornecedor e Custo
+                  </h3>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="edit-supplier" className="text-gray-200">
                         Fornecedor *
                       </Label>
-                      <Select name="supplier" defaultValue={editingItem.supplier} required>
+                      <Select
+                        name="supplier"
+                        defaultValue={editingItem.supplier}
+                        required
+                      >
                         <SelectTrigger className="bg-gray-800 border-gray-700 text-gray-200">
                           <SelectValue />
                         </SelectTrigger>
@@ -900,7 +914,10 @@ export default function InventoryManager() {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="edit-costPerUnit" className="text-gray-200">
+                      <Label
+                        htmlFor="edit-costPerUnit"
+                        className="text-gray-200"
+                      >
                         Custo por Unidade (R$) *
                       </Label>
                       <Input
@@ -926,7 +943,10 @@ export default function InventoryManager() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="edit-expiryDate" className="text-gray-200">
+                      <Label
+                        htmlFor="edit-expiryDate"
+                        className="text-gray-200"
+                      >
                         Data de Vencimento
                       </Label>
                       <Input
@@ -942,7 +962,9 @@ export default function InventoryManager() {
 
                 {/* Informações de Localização */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium text-gray-200">Informações de Localização</h3>
+                  <h3 className="text-lg font-medium text-gray-200">
+                    Informações de Localização
+                  </h3>
                   <div className="space-y-2">
                     <Label htmlFor="edit-location" className="text-gray-200">
                       Local de Armazenamento *
@@ -966,7 +988,10 @@ export default function InventoryManager() {
                 >
                   Cancelar
                 </Button>
-                <Button type="submit" className="bg-amber-600 hover:bg-amber-700">
+                <Button
+                  type="submit"
+                  className="bg-amber-600 hover:bg-amber-700"
+                >
                   Atualizar Item
                 </Button>
               </DialogFooter>
@@ -975,5 +1000,5 @@ export default function InventoryManager() {
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }
