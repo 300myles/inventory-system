@@ -90,15 +90,10 @@ function ElaboratedCoffeeLogo({ size = "large" }) {
   );
 }
 
-<<<<<<< HEAD
-function OliverCoffeeInventorySystemContent() {
-  const { theme } = useTheme();
-=======
 export default function OliverCoffeeInventorySystemContent() {
   const { theme } = useTheme();
   const router = useRouter();
   const { admin } = useInventory();
->>>>>>> d9ed2a4 (update)
 
   const exportData = () => {
     // Funcionalidade de exportação de dados
