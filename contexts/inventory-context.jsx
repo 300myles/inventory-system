@@ -439,6 +439,7 @@ const initialNotifications = [
 ]
 
 export function InventoryProvider({ children }) {
+  const [admin, setAdmin] = useState(null)
   const [inventory, setInventory] = useState([])
   const [suppliers, setSuppliers] = useState([])
   const [purchaseOrders, setPurchaseOrders] = useState([])
