@@ -4,7 +4,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 
-const InventoryContext = createContext(undefined);
+const InventoryContext = createContext(null);
 
 // Dados simulados como fallback
 const initialInventory = [
@@ -1300,7 +1300,7 @@ export function InventoryProvider({ children }) {
 
 export function useInventory() {
   const context = useContext(InventoryContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error(
       "useInventory deve ser usado dentro de um InventoryProvider"
     );
