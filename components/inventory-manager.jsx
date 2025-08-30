@@ -1,12 +1,19 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Badge } from "@/components/ui/badge"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import {
   Dialog,
   DialogContent,
@@ -15,9 +22,15 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Textarea } from "@/components/ui/textarea"
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Search,
   Plus,
@@ -33,55 +46,74 @@ import {
   ImageIcon,
   PlusIcon,
   Save,
-} from "lucide-react"
-import { useInventory } from "@/contexts/inventory-context"
-import { useTheme } from "@/contexts/theme-context"
+} from "lucide-react";
+import { useInventory } from "@/contexts/inventory-context";
+import { useTheme } from "@/contexts/theme-context";
 
 export default function InventoryManager() {
-  const { inventory, suppliers, addInventoryItem, updateInventoryItem, deleteInventoryItem, getStockPrediction } =
-    useInventory()
+  const {
+    inventory,
+    suppliers,
+    addInventoryItem,
+    updateInventoryItem,
+    deleteInventoryItem,
+    getStockPrediction,
+  } = useInventory();
 
-    const { theme } = useTheme()
+  const { theme } = useTheme();
 
-  const [searchTerm, setSearchTerm] = useState("")
-  const [categoryFilter, setCategoryFilter] = useState("all")
-  const [statusFilter, setStatusFilter] = useState("all")
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
-  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false)
-  const [editingItem, setEditingItem] = useState(null)
-  const [viewingItem, setViewingItem] = useState(null)
+  const [searchTerm, setSearchTerm] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState(null);
+  const [viewingItem, setViewingItem] = useState(null);
 
-  const categories = Array.from(new Set(inventory.map((item) => item.category)))
+  const categories = Array.from(
+    new Set(inventory.map((item) => item.category))
+  );
 
   const filteredInventory = inventory.filter((item) => {
     const matchesSearch =
       item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.sku.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.barcode?.toLowerCase().includes(searchTerm.toLowerCase())
+      item.productID.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.barcode?.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesCategory = categoryFilter === "all" || item.category === categoryFilter
+    const matchesCategory =
+      categoryFilter === "all" || item.category === categoryFilter;
 
-    let matchesStatus = true
+    let matchesStatus = true;
     if (statusFilter === "low_stock") {
-      matchesStatus = item.currentStock <= item.minStock
+      matchesStatus = item.currentStock <= item.minStock;
     } else if (statusFilter === "out_of_stock") {
-      matchesStatus = item.currentStock === 0
+      matchesStatus = item.currentStock === 0;
     } else if (statusFilter === "expiring") {
-      if (item.expiryDate) {
-        const today = new Date()
-        const expiryDate = new Date(item.expiryDate)
-        const daysUntilExpiry = Math.ceil((expiryDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
-        matchesStatus = daysUntilExpiry <= 30 && daysUntilExpiry > 0
+      if (item.uploadedDate) {
+        const today = new Date();
+        const uploadedDate = new Date(item.uploadedDate);
+        const daysUntilExpiry = Math.ceil(
+          (uploadedDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
+        );
+        matchesStatus = daysUntilExpiry <= 30 && daysUntilExpiry > 0;
       } else {
-        matchesStatus = false
+        matchesStatus = false;
       }
     }
 
-    return matchesSearch && matchesCategory && matchesStatus
-  })
+    return matchesSearch && matchesCategory && matchesStatus;
+  });
 
-  const table = ["Image", "Item", "Category",	"Status",	"Description",	"Price", "Actions"];
+  const table = [
+    "Image",
+    "Item",
+    "Category",
+    "Status",
+    "Description",
+    "Price",
+    "Actions",
+  ];
 
   const handleAddItem = (formData) => {
     const newItem = {
@@ -93,9 +125,9 @@ export default function InventoryManager() {
       unit: formData.get("unit"),
       costPerUnit: Number.parseFloat(formData.get("costPerUnit")),
       supplier: formData.get("supplier"),
-      lastRestocked: new Date().toISOString().split("T")[0],
-      expiryDate: formData.get("expiryDate") || undefined,
-      sku: formData.get("sku"),
+      lastUpdated: new Date().toISOString().split("T")[0],
+      uploadedDate: formData.get("uploadedDate") || undefined,
+      productID: formData.get("productID"),
       location: formData.get("location"),
       barcode: formData.get("barcode") || undefined,
       description: formData.get("description") || undefined,
@@ -103,13 +135,13 @@ export default function InventoryManager() {
       reorderPoint: Number.parseInt(formData.get("reorderPoint")),
       leadTime: Number.parseInt(formData.get("leadTime")),
       avgDailyUsage: Number.parseFloat(formData.get("avgDailyUsage")),
-    }
-    addInventoryItem(newItem)
-    setIsAddDialogOpen(false)
-  }
+    };
+    addInventoryItem(newItem);
+    setIsAddDialogOpen(false);
+  };
 
   const handleEditItem = (formData) => {
-    if (!editingItem) return
+    if (!editingItem) return;
 
     const updates = {
       name: formData.get("name"),
@@ -120,44 +152,58 @@ export default function InventoryManager() {
       unit: formData.get("unit"),
       costPerUnit: Number.parseFloat(formData.get("costPerUnit")),
       supplier: formData.get("supplier"),
-      expiryDate: formData.get("expiryDate") || undefined,
-      sku: formData.get("sku"),
+      uploadedDate: formData.get("uploadedDate") || undefined,
+      productID: formData.get("productID"),
       location: formData.get("location"),
       barcode: formData.get("barcode") || undefined,
       description: formData.get("description") || undefined,
       reorderPoint: Number.parseInt(formData.get("reorderPoint")),
       leadTime: Number.parseInt(formData.get("leadTime")),
       avgDailyUsage: Number.parseFloat(formData.get("avgDailyUsage")),
-    }
-    updateInventoryItem(editingItem.id, updates)
-    setIsEditDialogOpen(false)
-    setEditingItem(null)
-  }
+    };
+    updateInventoryItem(editingItem.id, updates);
+    setIsEditDialogOpen(false);
+    setEditingItem(null);
+  };
 
   const openEditDialog = (item) => {
-    setEditingItem(item)
-    setIsEditDialogOpen(true)
-  }
+    setEditingItem(item);
+    setIsEditDialogOpen(true);
+  };
 
   const openViewDialog = (item) => {
-    setViewingItem(item)
-    setIsViewDialogOpen(true)
-  }
+    setViewingItem(item);
+    setIsViewDialogOpen(true);
+  };
 
   const getItemStatus = (item) => {
     if (item.currentStock <= item.minStock) {
-      return { status: "Out of Stock", color: "bg-red-900 text-red-300 border-red-700", icon: TrendingDown }
+      return {
+        status: "Out of Stock",
+        color: "bg-red-900 text-red-300 border-red-700",
+        icon: TrendingDown,
+      };
     }
-    if (item.expiryDate) {
-      const today = new Date()
-      const expiryDate = new Date(item.expiryDate)
-      const daysUntilExpiry = Math.ceil((expiryDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
+    if (item.uploadedDate) {
+      const today = new Date();
+      const uploadedDate = new Date(item.uploadedDate);
+      const daysUntilExpiry = Math.ceil(
+        (uploadedDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
+      );
       if (daysUntilExpiry <= 7 && daysUntilExpiry > 0) {
-        return { status: "Vencendo", color: "bg-orange-900 text-orange-300 border-orange-700", icon: Clock }
+        return {
+          status: "Vencendo",
+          color: "bg-orange-900 text-orange-300 border-orange-700",
+          icon: Clock,
+        };
       }
     }
-    return { status: "In Stock", color: "bg-green-900 text-green-300 border-green-700", icon: Package }
-  }
+    return {
+      status: "In Stock",
+      color: "bg-green-900 text-green-300 border-green-700",
+      icon: Package,
+    };
+  };
 
   return (
     <div className="space-y-6">
@@ -174,15 +220,6 @@ export default function InventoryManager() {
           <p className="{textSecondary}">Comprehensive Inventory Overview</p>
         </div>
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            className={`border-gray-700 hover:bg-gray-800 hover:cursor-pointer hover:text-gray-200 bg-transparent ${
-              theme === "dark" ? "text-gray-200" : "text-gray-800"
-            }`}
-          >
-            <Scan className="h-4 w-4 mr-2" />
-            Expand View
-          </Button>
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
             <DialogTrigger asChild>
               <Button className="bg-blue-600 hover:bg-blue-700 text-white hover:cursor-pointer">
@@ -216,12 +253,12 @@ export default function InventoryManager() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="sku" className="text-gray-200">
+                        <Label htmlFor="productID" className="text-gray-200">
                           Price *
                         </Label>
                         <Input
-                          id="sku"
-                          name="sku"
+                          id="productID"
+                          name="productID"
                           required
                           className="bg-gray-800 border-gray-700 text-gray-200"
                         />
@@ -259,7 +296,7 @@ export default function InventoryManager() {
                       <Label htmlFor="description" className="text-gray-200">
                         Description
                       </Label>
-            
+
                       <Textarea
                         id="description"
                         name="description"
@@ -272,7 +309,12 @@ export default function InventoryManager() {
                       <Label htmlFor="image" className="text-gray-200">
                         Image
                       </Label>
-                      <Input type="file" id="image" name="image" className="bg-gray-800 border-gray-700 text-gray-200" />
+                      <Input
+                        type="file"
+                        id="image"
+                        name="image"
+                        className="bg-gray-800 border-gray-700 text-gray-200"
+                      />
                     </div>
                   </div>
                 </div>
@@ -344,7 +386,7 @@ export default function InventoryManager() {
                     : "bg-white border-gray-400"
                 }`}
               >
-                <SelectItem value="all">Today's Category</SelectItem>
+                <SelectItem value="all">Items Category</SelectItem>
                 {categories.map((category) => (
                   <SelectItem key={category} value={category}>
                     {category}
@@ -369,10 +411,9 @@ export default function InventoryManager() {
                     : "bg-white border-gray-400"
                 }`}
               >
-                <SelectItem value="all">Today's Status</SelectItem>
-                <SelectItem value="low_stock">Estoque Baixo</SelectItem>
-                <SelectItem value="out_of_stock">Sem Estoque</SelectItem>
-                <SelectItem value="expiring">Vencendo</SelectItem>
+                <SelectItem value="all">Stock Status</SelectItem>
+                 <SelectItem value="in_stock">In Stock</SelectItem>
+                <SelectItem value="out_of_stock">Out of Stock</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -446,7 +487,9 @@ export default function InventoryManager() {
                           <p className="font-medium text-gray-200">
                             {item.name}
                           </p>
-                          <p className="text-sm text-gray-400">{item.sku}</p>
+                          <p className="text-sm text-gray-400">
+                            {item.productID}
+                          </p>
                           {item.barcode && (
                             <p className="text-xs text-gray-500">
                               Código: {item.barcode}
@@ -469,10 +512,11 @@ export default function InventoryManager() {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-gray-300">
-                        {item.supplier}
+                        {item.description}
                       </TableCell>
                       <TableCell className="text-gray-300">
-                        &#8358; {stockValue.toLocaleString("pt-BR", {
+                        &#8358;{" "}
+                        {stockValue.toLocaleString("pt-BR", {
                           minimumFractionDigits: 2,
                         })}
                       </TableCell>
@@ -517,9 +561,7 @@ export default function InventoryManager() {
       <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
         <DialogContent className="max-w-2xl bg-gray-900 border-gray-800">
           <DialogHeader>
-            <DialogTitle className="text-gray-200">
-              Details of Item
-            </DialogTitle>
+            <DialogTitle className="text-gray-200">Details of Item</DialogTitle>
           </DialogHeader>
           {viewingItem && (
             <div className="space-y-6">
@@ -554,7 +596,7 @@ export default function InventoryManager() {
                   <Label className="text-sm font-medium text-gray-300">
                     Item ID
                   </Label>
-                  <p className="text-gray-200">{viewingItem.sku}</p>
+                  <p className="text-gray-200">{viewingItem.productID}</p>
                 </div>
                 <div>
                   <Label className="text-sm font-medium text-gray-300">
@@ -564,24 +606,17 @@ export default function InventoryManager() {
                 </div>
                 <div>
                   <Label className="text-sm font-medium text-gray-300">
-                    Fornecedor
+                    Quantity
                   </Label>
-                  <p className="text-gray-200">{viewingItem.supplier}</p>
+                  <p className="text-gray-200">80</p>
                 </div>
+
                 <div>
                   <Label className="text-sm font-medium text-gray-300">
-                    Estoque Atual
+                    Price
                   </Label>
                   <p className="text-gray-200">
-                    {viewingItem.currentStock} {viewingItem.unit}
-                  </p>
-                </div>
-                <div>
-                  <Label className="text-sm font-medium text-gray-300">
-                    Custo por Unidade
-                  </Label>
-                  <p className="text-gray-200">
-                    R${" "}
+                    &#8358;{" "}
                     {viewingItem.costPerUnit.toLocaleString("pt-BR", {
                       minimumFractionDigits: 2,
                     })}
@@ -589,10 +624,10 @@ export default function InventoryManager() {
                 </div>
                 <div>
                   <Label className="text-sm font-medium text-gray-300">
-                    Valor Total
+                    Total Value
                   </Label>
                   <p className="text-gray-200">
-                    R${" "}
+                    &#8358;{" "}
                     {(
                       viewingItem.currentStock * viewingItem.costPerUnit
                     ).toLocaleString("pt-BR", {
@@ -600,19 +635,13 @@ export default function InventoryManager() {
                     })}
                   </p>
                 </div>
-                <div>
-                  <Label className="text-sm font-medium text-gray-300">
-                    Localização
-                  </Label>
-                  <p className="text-gray-200">{viewingItem.location}</p>
-                </div>
-                {viewingItem.expiryDate && (
+                {viewingItem.uploadedDate && (
                   <div>
                     <Label className="text-sm font-medium text-gray-300">
-                      Data de Vencimento
+                      Date Added
                     </Label>
                     <p className="text-gray-200">
-                      {new Date(viewingItem.expiryDate).toLocaleDateString(
+                      {new Date(viewingItem.uploadedDate).toLocaleDateString(
                         "pt-BR"
                       )}
                     </p>
@@ -620,155 +649,116 @@ export default function InventoryManager() {
                 )}
                 <div>
                   <Label className="text-sm font-medium text-gray-300">
-                    Última Reposição
+                    Last Modified
                   </Label>
                   <p className="text-gray-200">
-                    {new Date(viewingItem.lastRestocked).toLocaleDateString(
+                    {new Date(viewingItem.lastUpdated).toLocaleDateString(
                       "pt-BR"
                     )}
                   </p>
                 </div>
               </div>
-
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <Label className="text-sm font-medium text-gray-300">
-                    Previsão 7 Dias
-                  </Label>
-                  <p className="text-gray-200">
-                    {getStockPrediction(viewingItem.id, 7).toFixed(1)}{" "}
-                    {viewingItem.unit}
-                  </p>
-                </div>
-                <div>
-                  <Label className="text-sm font-medium text-gray-300">
-                    Previsão 30 Dias
-                  </Label>
-                  <p className="text-gray-200">
-                    {getStockPrediction(viewingItem.id, 30).toFixed(1)}{" "}
-                    {viewingItem.unit}
-                  </p>
-                </div>
-                <div>
-                  <Label className="text-sm font-medium text-gray-300">
-                    Tempo de Entrega
-                  </Label>
-                  <p className="text-gray-200">{viewingItem.leadTime} dias</p>
-                </div>
-              </div>
             </div>
           )}
-          <DialogFooter>
-            <Button
-              onClick={() => setIsViewDialogOpen(false)}
-              className="bg-amber-600 hover:bg-amber-700"
-            >
-              Fechar
-            </Button>
-          </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* Edit Inventory Item*/}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-gray-900 border-gray-800">
-              <DialogHeader>
-                <DialogTitle className="text-gray-200">
-                 Edit Item
-                </DialogTitle>
-                <DialogDescription className="text-gray-400">
-                  Edit Item Details
-                </DialogDescription>
-              </DialogHeader>
-              <form action={handleAddItem}>
-                <div className="grid gap-6 py-4">
-                  {/* Informações Básicas */}
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="name" className="text-gray-200">
-                          Name of Item *
-                        </Label>
-                        <Input
-                          id="name"
-                          name="name"
-                          required
-                          className="bg-gray-800 border-gray-700 text-gray-200"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="sku" className="text-gray-200">
-                          Price *
-                        </Label>
-                        <Input
-                          id="sku"
-                          name="sku"
-                          required
-                          className="bg-gray-800 border-gray-700 text-gray-200"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="barcode" className="text-gray-200">
-                          Quantity
-                        </Label>
-                        <Input
-                          id="barcode"
-                          name="barcode"
-                          className="bg-gray-800 border-gray-700 text-gray-200"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="category" className="text-gray-200">
-                          Category *
-                        </Label>
-                        <Select name="category" required>
-                          <SelectTrigger className="bg-gray-800 border-gray-700 text-gray-200">
-                            <SelectValue placeholder="Select Category" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-gray-800 border-gray-700">
-                            <SelectItem value="Appliances">
-                              Appliances
-                            </SelectItem>
-                            <SelectItem value="Medicine">Medicine</SelectItem>
-                            <SelectItem value="Item1">Item1</SelectItem>
-                            <SelectItem value="Item2">Item2</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="description" className="text-gray-200">
-                        Description
-                      </Label>
-            
-                      <Textarea
-                        id="description"
-                        name="description"
-                        className="bg-gray-800 border-gray-700 text-gray-200"
-                        placeholder="Item Description Here..."
-                      />
-                    </div>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-gray-900 border-gray-800">
+          <DialogHeader>
+            <DialogTitle className="text-gray-200">Edit Item</DialogTitle>
+            <DialogDescription className="text-gray-400">
+              Edit Item Details
+            </DialogDescription>
+          </DialogHeader>
+          <form action={handleAddItem}>
+            <div className="grid gap-6 py-4">
+              {/* Informações Básicas */}
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name" className="text-gray-200">
+                      Name of Item *
+                    </Label>
+                    <Input
+                      id="name"
+                      name="name"
+                      required
+                      className="bg-gray-800 border-gray-700 text-gray-200"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="productID" className="text-gray-200">
+                      Price *
+                    </Label>
+                    <Input
+                      id="productID"
+                      name="productID"
+                      required
+                      className="bg-gray-800 border-gray-700 text-gray-200"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="barcode" className="text-gray-200">
+                      Quantity
+                    </Label>
+                    <Input
+                      id="barcode"
+                      name="barcode"
+                      className="bg-gray-800 border-gray-700 text-gray-200"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="category" className="text-gray-200">
+                      Category *
+                    </Label>
+                    <Select name="category" required>
+                      <SelectTrigger className="bg-gray-800 border-gray-700 text-gray-200">
+                        <SelectValue placeholder="Select Category" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-gray-800 border-gray-700">
+                        <SelectItem value="Appliances">Appliances</SelectItem>
+                        <SelectItem value="Medicine">Medicine</SelectItem>
+                        <SelectItem value="Item1">Item1</SelectItem>
+                        <SelectItem value="Item2">Item2</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
-                <DialogFooter>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setIsAddDialogOpen(false)}
-                    className="border-gray-700 hover:bg-gray-800 text-gray-200"
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    type="submit"
-                    className="bg-blue-600 cursor-pointer hover:bg-blue-700"
-                  >
-                    <Save />
-                    Save Changes
-                  </Button>
-                </DialogFooter>
-              </form>
-            </DialogContent>
+                <div className="space-y-2">
+                  <Label htmlFor="description" className="text-gray-200">
+                    Description
+                  </Label>
+
+                  <Textarea
+                    id="description"
+                    name="description"
+                    className="bg-gray-800 border-gray-700 text-gray-200"
+                    placeholder="Item Description Here..."
+                  />
+                </div>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsAddDialogOpen(false)}
+                className="border-gray-700 hover:bg-gray-800 text-gray-200"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                className="bg-blue-600 cursor-pointer hover:bg-blue-700"
+              >
+                <Save />
+                Save Changes
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
       </Dialog>
     </div>
   );

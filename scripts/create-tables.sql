@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS inventory_items (
     supplier VARCHAR(255) NOT NULL,
     last_restocked DATE NOT NULL,
     expiry_date DATE,
-    sku VARCHAR(100) UNIQUE NOT NULL,
+    productID VARCHAR(100) UNIQUE NOT NULL,
     location VARCHAR(255) NOT NULL,
     barcode VARCHAR(100),
     description TEXT,
@@ -92,7 +92,7 @@ CREATE TABLE IF NOT EXISTS notifications (
 -- Índices para melhor performance
 CREATE INDEX IF NOT EXISTS idx_inventory_items_category ON inventory_items(category);
 CREATE INDEX IF NOT EXISTS idx_inventory_items_supplier ON inventory_items(supplier);
-CREATE INDEX IF NOT EXISTS idx_inventory_items_sku ON inventory_items(sku);
+CREATE INDEX IF NOT EXISTS idx_inventory_items_productID ON inventory_items(productID);
 CREATE INDEX IF NOT EXISTS idx_inventory_items_barcode ON inventory_items(barcode);
 CREATE INDEX IF NOT EXISTS idx_inventory_items_current_stock ON inventory_items(current_stock);
 CREATE INDEX IF NOT EXISTS idx_inventory_items_expiry_date ON inventory_items(expiry_date);
@@ -153,11 +153,11 @@ ON CONFLICT DO NOTHING;
 
 INSERT INTO inventory_items (
     name, category, current_stock, min_stock, max_stock, unit, cost_per_unit, 
-    supplier, last_restocked, expiry_date, sku, location, barcode, description, 
+    supplier, last_restocked, expiry_date, productID, location, barcode, description, 
     image, reorder_point, lead_time, avg_daily_usage
 ) VALUES
 ('Grãos Etíopes Yirgacheffe Premium', 'Grãos de Café', 45, 20, 150, 'kg', 52.75, 'Importadora Highland Coffee', '2024-01-20', '2024-07-20', 'ETH-YIR-001', 'Depósito A - Prateleira 1', '1234567890123', 'Café etíope de origem única com notas florais', '/images/coffee-beans-ethiopian.jpg', 25, 14, 2.5),
 ('Café Colombiano Supremo Torra Escura', 'Grãos de Café', 12, 25, 100, 'kg', 44.25, 'South American Coffee Co.', '2024-01-15', '2024-06-15', 'COL-SUP-002', 'Depósito A - Prateleira 2', '1234567890124', 'Café colombiano encorpado com notas de chocolate', '/images/coffee-beans-colombian.jpg', 30, 10, 3.2),
 ('Copos de Papel Premium 350ml', 'Suprimentos', 850, 500, 3000, 'unidades', 0.6, 'EcoPackaging Solutions', '2024-01-22', NULL, 'CUP-350ML-004', 'Depósito B - Seção 1', '1234567890126', 'Copos de papel biodegradáveis com marca Oliver Coffee', '/images/paper-cups.jpg', 600, 7, 45),
 ('Leite Integral Orgânico', 'Laticínios', 18, 25, 60, 'litros', 14.25, 'Laticínios Vale Verde', '2024-01-24', '2024-02-02', 'LEITE-INT-005', 'Geladeira - Prateleira A', '1234567890127', 'Leite integral orgânico fresco de laticínio local', '/images/organic-milk.jpg', 30, 2, 4.5)
-ON CONFLICT (sku) DO NOTHING;
+ON CONFLICT (productID) DO NOTHING;

@@ -366,47 +366,6 @@ export default function Dashboard() {
         </Card>
       </div>
 
-      {/* Inventory History Container */}
-      <div className="grid">
-        <Card className={cardClass}>
-          <CardHeader className={`border-b border-gray-400`}>
-            <CardTitle className={`flex items-center gap-2 ${textPrimary}`}>
-              <HistoryIcon className="h-5 w-5 text-amber-500" />
-              Inventory History
-            </CardTitle>
-            <CardDescription className={textSecondary}>
-              Recent Inventory Updates
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3 mt-[15px]">
-
-            <div
-              className={`p-3 rounded-lg border ${
-                theme === "dark"
-                  ? "border-blue-800 bg-blue-950/50"
-                  : "border-blue-200 bg-blue-50"
-              }`}
-            >
-              <div className="flex items-center justify-between">
-                <span className={`text-sm font-medium ${textPrimary}`}>
-                  Item Sold
-                </span>
-                <Badge
-                  variant="outline"
-                  className="bg-blue-900 text-blue-300 border-blue-700 text-xs"
-                >
-                  Hoje
-                </Badge>
-              </div>
-              <p className={`text-xs ${textSecondary} mt-1`}>
-                {expiringItems.length} itens vencem em 30 dias
-              </p>
-            </div>
-
-
-          </CardContent>
-        </Card>
-      </div>
     </div>
   );
 }
