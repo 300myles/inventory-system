@@ -1,9 +1,10 @@
-"use client"
+"use client";
 
-import { createContext, useContext, useState, useEffect } from "react"
-import { supabase, isSupabaseConfigured } from "@/lib/supabase"
+import { createContext, useContext, useState, useEffect } from "react";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase";
+import { useRouter } from "next/navigation";
 
-const InventoryContext = createContext(undefined)
+const InventoryContext = createContext(undefined);
 
 // Dados simulados como fallback
 const initialInventory = [
@@ -256,7 +257,7 @@ const initialInventory = [
     leadTime: 7,
     avgDailyUsage: 0.8,
   },
-]
+];
 
 const initialSuppliers = [
   {
@@ -343,13 +344,20 @@ const initialSuppliers = [
     deliveryTime: 12,
     isActive: true,
   },
-]
+];
 
 const initialPurchaseOrders = [
   {
     id: "PED-2024-001",
     supplier: "Importadora Highland Coffee",
-    items: [{ itemId: "1", itemName: "Grãos Etíopes Yirgacheffe Premium", quantity: 100, unitCost: 52.75 }],
+    items: [
+      {
+        itemId: "1",
+        itemName: "Grãos Etíopes Yirgacheffe Premium",
+        quantity: 100,
+        unitCost: 52.75,
+      },
+    ],
     totalAmount: 5275.0,
     status: "aprovado",
     orderDate: "2024-01-25",
@@ -361,7 +369,14 @@ const initialPurchaseOrders = [
   {
     id: "PED-2024-002",
     supplier: "Laticínios Vale Verde",
-    items: [{ itemId: "5", itemName: "Leite Integral Orgânico", quantity: 40, unitCost: 14.25 }],
+    items: [
+      {
+        itemId: "5",
+        itemName: "Leite Integral Orgânico",
+        quantity: 40,
+        unitCost: 14.25,
+      },
+    ],
     totalAmount: 570.0,
     status: "enviado",
     orderDate: "2024-01-24",
@@ -372,7 +387,14 @@ const initialPurchaseOrders = [
   {
     id: "PED-2024-003",
     supplier: "EcoPackaging Solutions",
-    items: [{ itemId: "4", itemName: "Copos de Papel Premium 350ml", quantity: 2000, unitCost: 0.6 }],
+    items: [
+      {
+        itemId: "4",
+        itemName: "Copos de Papel Premium 350ml",
+        quantity: 2000,
+        unitCost: 0.6,
+      },
+    ],
     totalAmount: 1200.0,
     status: "entregue",
     orderDate: "2024-01-22",
@@ -384,7 +406,14 @@ const initialPurchaseOrders = [
   {
     id: "PED-2024-004",
     supplier: "South American Coffee Co.",
-    items: [{ itemId: "2", itemName: "Café Colombiano Supremo Torra Escura", quantity: 75, unitCost: 44.25 }],
+    items: [
+      {
+        itemId: "2",
+        itemName: "Café Colombiano Supremo Torra Escura",
+        quantity: 75,
+        unitCost: 44.25,
+      },
+    ],
     totalAmount: 3318.75,
     status: "pendente",
     orderDate: "2024-01-25",
@@ -393,14 +422,15 @@ const initialPurchaseOrders = [
     priority: "urgente",
     createdBy: "Usuário Admin",
   },
-]
+];
 
 const initialNotifications = [
   {
     id: "1",
     type: "estoque_baixo",
     title: "Alerta de Estoque Baixo",
-    message: "Café Colombiano Supremo Torra Escura está abaixo do nível mínimo (12/25)",
+    message:
+      "Café Colombiano Supremo Torra Escura está abaixo do nível mínimo (12/25)",
     date: "2024-01-25T10:30:00Z",
     read: false,
     priority: "alta",
@@ -430,23 +460,30 @@ const initialNotifications = [
     id: "4",
     type: "estoque_baixo",
     title: "Alerta de Estoque Baixo",
-    message: "Café Brasileiro Santos Torra Média está criticamente baixo (8/20)",
+    message:
+      "Café Brasileiro Santos Torra Média está criticamente baixo (8/20)",
     date: "2024-01-25T07:20:00Z",
     read: false,
     priority: "alta",
     actionRequired: true,
   },
-]
+];
 
 export function InventoryProvider({ children }) {
-  const [admin, setAdmin] = useState(null)
-  const [inventory, setInventory] = useState([])
-  const [suppliers, setSuppliers] = useState([])
-  const [purchaseOrders, setPurchaseOrders] = useState([])
-  const [stockMovements, setStockMovements] = useState([])
-  const [notifications, setNotifications] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const router = useRouter();
+  const [admin, setAdmin] = useState(null);
+  const [inventory, setInventory] = useState([]);
+  const [suppliers, setSuppliers] = useState([]);
+  const [purchaseOrders, setPurchaseOrders] = useState([]);
+  const [stockMovements, setStockMovements] = useState([]);
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // admin authentication
+  // useState(() => {
+  //   
+  // }, [admin]);
 
   // Funções de conversão para Supabase
   const convertInventoryItem = (item) => ({
@@ -469,7 +506,7 @@ export function InventoryProvider({ children }) {
     reorderPoint: item.reorder_point,
     leadTime: item.lead_time,
     avgDailyUsage: item.avg_daily_usage,
-  })
+  });
 
   const convertSupplier = (supplier) => ({
     id: supplier.id,
@@ -484,7 +521,7 @@ export function InventoryProvider({ children }) {
     paymentTerms: supplier.payment_terms,
     deliveryTime: supplier.delivery_time,
     isActive: supplier.is_active,
-  })
+  });
 
   const convertPurchaseOrder = (order) => ({
     id: order.id,
@@ -498,7 +535,7 @@ export function InventoryProvider({ children }) {
     notes: order.notes,
     priority: order.priority,
     createdBy: order.created_by,
-  })
+  });
 
   const convertStockMovement = (movement) => ({
     id: movement.id,
@@ -510,7 +547,7 @@ export function InventoryProvider({ children }) {
     date: movement.date,
     user: movement.user,
     reference: movement.reference,
-  })
+  });
 
   const convertNotification = (notification) => ({
     id: notification.id,
@@ -521,62 +558,79 @@ export function InventoryProvider({ children }) {
     read: notification.read,
     priority: notification.priority,
     actionRequired: notification.action_required,
-  })
+  });
 
   // Carregar dados do Supabase ou usar dados simulados
   const loadData = async () => {
     try {
-      setLoading(true)
-      setError(null)
+      setLoading(true);
+      setError(null);
 
       if (!isSupabaseConfigured || !supabase) {
         // Usar dados simulados
-        setInventory(initialInventory)
-        setSuppliers(initialSuppliers)
-        setPurchaseOrders(initialPurchaseOrders)
-        setNotifications(initialNotifications)
-        setStockMovements([])
-        return
+        setInventory(initialInventory);
+        setSuppliers(initialSuppliers);
+        setPurchaseOrders(initialPurchaseOrders);
+        setNotifications(initialNotifications);
+        setStockMovements([]);
+        return;
       }
 
       // Carregar dados do Supabase
-      const [inventoryRes, suppliersRes, ordersRes, movementsRes, notificationsRes] = await Promise.all([
+      const [
+        inventoryRes,
+        suppliersRes,
+        ordersRes,
+        movementsRes,
+        notificationsRes,
+      ] = await Promise.all([
         supabase.from("inventory_items").select("*").order("name"),
         supabase.from("suppliers").select("*").order("name"),
-        supabase.from("purchase_orders").select("*").order("created_at", { ascending: false }),
-        supabase.from("stock_movements").select("*").order("date", { ascending: false }).limit(100),
-        supabase.from("notifications").select("*").order("date", { ascending: false }).limit(50),
-      ])
+        supabase
+          .from("purchase_orders")
+          .select("*")
+          .order("created_at", { ascending: false }),
+        supabase
+          .from("stock_movements")
+          .select("*")
+          .order("date", { ascending: false })
+          .limit(100),
+        supabase
+          .from("notifications")
+          .select("*")
+          .order("date", { ascending: false })
+          .limit(50),
+      ]);
 
-      if (inventoryRes.error) throw inventoryRes.error
-      if (suppliersRes.error) throw suppliersRes.error
-      if (ordersRes.error) throw ordersRes.error
-      if (movementsRes.error) throw movementsRes.error
-      if (notificationsRes.error) throw notificationsRes.error
+      if (inventoryRes.error) throw inventoryRes.error;
+      if (suppliersRes.error) throw suppliersRes.error;
+      if (ordersRes.error) throw ordersRes.error;
+      if (movementsRes.error) throw movementsRes.error;
+      if (notificationsRes.error) throw notificationsRes.error;
 
-      setInventory(inventoryRes.data || [])
-      setSuppliers(suppliersRes.data || [])
-      setPurchaseOrders(ordersRes.data || [])
-      setStockMovements(movementsRes.data || [])
-      setNotifications(notificationsRes.data || [])
+      setInventory(inventoryRes.data || []);
+      setSuppliers(suppliersRes.data || []);
+      setPurchaseOrders(ordersRes.data || []);
+      setStockMovements(movementsRes.data || []);
+      setNotifications(notificationsRes.data || []);
     } catch (err) {
-      console.error("Erro ao carregar dados:", err)
-      setError(err instanceof Error ? err.message : "Erro desconhecido")
+      console.error("Erro ao carregar dados:", err);
+      setError(err instanceof Error ? err.message : "Erro desconhecido");
 
       // Fallback para dados simulados em caso de erro
-      setInventory(initialInventory)
-      setSuppliers(initialSuppliers)
-      setPurchaseOrders(initialPurchaseOrders)
-      setNotifications(initialNotifications)
-      setStockMovements([])
+      setInventory(initialInventory);
+      setSuppliers(initialSuppliers);
+      setPurchaseOrders(initialPurchaseOrders);
+      setNotifications(initialNotifications);
+      setStockMovements([]);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
-    loadData()
-  }, [])
+    loadData();
+  }, []);
 
   // Funções CRUD - adaptadas para funcionar com ou sem Supabase
   const addInventoryItem = async (item) => {
@@ -605,12 +659,12 @@ export function InventoryProvider({ children }) {
             avg_daily_usage: item.avgDailyUsage,
           })
           .select()
-          .single()
+          .single();
 
-        if (error) throw error
+        if (error) throw error;
 
-        const newItem = convertInventoryItem(data)
-        setInventory((prev) => [...prev, newItem])
+        const newItem = convertInventoryItem(data);
+        setInventory((prev) => [...prev, newItem]);
 
         await addStockMovement({
           itemId: newItem.id,
@@ -620,15 +674,15 @@ export function InventoryProvider({ children }) {
           reason: "Entrada inicial de estoque",
           date: new Date().toISOString(),
           user: "Sistema",
-        })
+        });
       } catch (err) {
-        console.error("Erro ao adicionar item:", err)
-        throw err
+        console.error("Erro ao adicionar item:", err);
+        throw err;
       }
     } else {
       // Modo simulado
-      const newItem = { ...item, id: Date.now().toString() }
-      setInventory((prev) => [...prev, newItem])
+      const newItem = { ...item, id: Date.now().toString() };
+      setInventory((prev) => [...prev, newItem]);
 
       addStockMovement({
         itemId: newItem.id,
@@ -638,93 +692,128 @@ export function InventoryProvider({ children }) {
         reason: "Entrada inicial de estoque",
         date: new Date().toISOString(),
         user: "Sistema",
-      })
+      });
     }
-  }
+  };
 
   const updateInventoryItem = async (id, updates) => {
     if (isSupabaseConfigured && supabase) {
       try {
-        const updateData = {}
-        if (updates.name !== undefined) updateData.name = updates.name
-        if (updates.category !== undefined) updateData.category = updates.category
-        if (updates.currentStock !== undefined) updateData.current_stock = updates.currentStock
-        if (updates.minStock !== undefined) updateData.min_stock = updates.minStock
-        if (updates.maxStock !== undefined) updateData.max_stock = updates.maxStock
-        if (updates.unit !== undefined) updateData.unit = updates.unit
-        if (updates.costPerUnit !== undefined) updateData.cost_per_unit = updates.costPerUnit
-        if (updates.supplier !== undefined) updateData.supplier = updates.supplier
-        if (updates.lastRestocked !== undefined) updateData.last_restocked = updates.lastRestocked
-        if (updates.expiryDate !== undefined) updateData.expiry_date = updates.expiryDate
-        if (updates.sku !== undefined) updateData.sku = updates.sku
-        if (updates.location !== undefined) updateData.location = updates.location
-        if (updates.barcode !== undefined) updateData.barcode = updates.barcode
-        if (updates.description !== undefined) updateData.description = updates.description
-        if (updates.image !== undefined) updateData.image = updates.image
-        if (updates.reorderPoint !== undefined) updateData.reorder_point = updates.reorderPoint
-        if (updates.leadTime !== undefined) updateData.lead_time = updates.leadTime
-        if (updates.avgDailyUsage !== undefined) updateData.avg_daily_usage = updates.avgDailyUsage
+        const updateData = {};
+        if (updates.name !== undefined) updateData.name = updates.name;
+        if (updates.category !== undefined)
+          updateData.category = updates.category;
+        if (updates.currentStock !== undefined)
+          updateData.current_stock = updates.currentStock;
+        if (updates.minStock !== undefined)
+          updateData.min_stock = updates.minStock;
+        if (updates.maxStock !== undefined)
+          updateData.max_stock = updates.maxStock;
+        if (updates.unit !== undefined) updateData.unit = updates.unit;
+        if (updates.costPerUnit !== undefined)
+          updateData.cost_per_unit = updates.costPerUnit;
+        if (updates.supplier !== undefined)
+          updateData.supplier = updates.supplier;
+        if (updates.lastRestocked !== undefined)
+          updateData.last_restocked = updates.lastRestocked;
+        if (updates.expiryDate !== undefined)
+          updateData.expiry_date = updates.expiryDate;
+        if (updates.sku !== undefined) updateData.sku = updates.sku;
+        if (updates.location !== undefined)
+          updateData.location = updates.location;
+        if (updates.barcode !== undefined) updateData.barcode = updates.barcode;
+        if (updates.description !== undefined)
+          updateData.description = updates.description;
+        if (updates.image !== undefined) updateData.image = updates.image;
+        if (updates.reorderPoint !== undefined)
+          updateData.reorder_point = updates.reorderPoint;
+        if (updates.leadTime !== undefined)
+          updateData.lead_time = updates.leadTime;
+        if (updates.avgDailyUsage !== undefined)
+          updateData.avg_daily_usage = updates.avgDailyUsage;
 
-        const { data, error } = await supabase.from("inventory_items").update(updateData).eq("id", id).select().single()
+        const { data, error } = await supabase
+          .from("inventory_items")
+          .update(updateData)
+          .eq("id", id)
+          .select()
+          .single();
 
-        if (error) throw error
+        if (error) throw error;
 
-        const updatedItem = convertInventoryItem(data)
-        setInventory((prev) => prev.map((item) => (item.id === id ? updatedItem : item)))
+        const updatedItem = convertInventoryItem(data);
+        setInventory((prev) =>
+          prev.map((item) => (item.id === id ? updatedItem : item))
+        );
 
         // Rastrear mudanças de estoque
-        const oldItem = inventory.find((item) => item.id === id)
-        if (oldItem && updates.currentStock !== undefined && updates.currentStock !== oldItem.currentStock) {
-          const difference = updates.currentStock - oldItem.currentStock
+        const oldItem = inventory.find((item) => item.id === id);
+        if (
+          oldItem &&
+          updates.currentStock !== undefined &&
+          updates.currentStock !== oldItem.currentStock
+        ) {
+          const difference = updates.currentStock - oldItem.currentStock;
           await addStockMovement({
             itemId: id,
             itemName: oldItem.name,
             type: difference > 0 ? "entrada" : "saida",
             quantity: Math.abs(difference),
-            reason: difference > 0 ? "Aumento de estoque" : "Redução de estoque",
+            reason:
+              difference > 0 ? "Aumento de estoque" : "Redução de estoque",
             date: new Date().toISOString(),
             user: "Sistema",
-          })
+          });
         }
       } catch (err) {
-        console.error("Erro ao atualizar item:", err)
-        throw err
+        console.error("Erro ao atualizar item:", err);
+        throw err;
       }
     } else {
       // Modo simulado
       setInventory((prev) => {
-        const oldItem = prev.find((item) => item.id === id)
-        const newItem = prev.map((item) => (item.id === id ? { ...item, ...updates } : item))
+        const oldItem = prev.find((item) => item.id === id);
+        const newItem = prev.map((item) =>
+          item.id === id ? { ...item, ...updates } : item
+        );
 
         // Rastrear mudanças de estoque
-        if (oldItem && updates.currentStock !== undefined && updates.currentStock !== oldItem.currentStock) {
-          const difference = updates.currentStock - oldItem.currentStock
+        if (
+          oldItem &&
+          updates.currentStock !== undefined &&
+          updates.currentStock !== oldItem.currentStock
+        ) {
+          const difference = updates.currentStock - oldItem.currentStock;
           addStockMovement({
             itemId: id,
             itemName: oldItem.name,
             type: difference > 0 ? "entrada" : "saida",
             quantity: Math.abs(difference),
-            reason: difference > 0 ? "Aumento de estoque" : "Redução de estoque",
+            reason:
+              difference > 0 ? "Aumento de estoque" : "Redução de estoque",
             date: new Date().toISOString(),
             user: "Sistema",
-          })
+          });
         }
 
-        return newItem
-      })
+        return newItem;
+      });
     }
-  }
+  };
 
   const deleteInventoryItem = async (id) => {
     if (isSupabaseConfigured && supabase) {
       try {
-        const item = inventory.find((i) => i.id === id)
+        const item = inventory.find((i) => i.id === id);
 
-        const { error } = await supabase.from("inventory_items").delete().eq("id", id)
+        const { error } = await supabase
+          .from("inventory_items")
+          .delete()
+          .eq("id", id);
 
-        if (error) throw error
+        if (error) throw error;
 
-        setInventory((prev) => prev.filter((item) => item.id !== id))
+        setInventory((prev) => prev.filter((item) => item.id !== id));
 
         if (item) {
           await addStockMovement({
@@ -735,15 +824,15 @@ export function InventoryProvider({ children }) {
             reason: "Item removido do sistema",
             date: new Date().toISOString(),
             user: "Sistema",
-          })
+          });
         }
       } catch (err) {
-        console.error("Erro ao deletar item:", err)
-        throw err
+        console.error("Erro ao deletar item:", err);
+        throw err;
       }
     } else {
       // Modo simulado
-      const item = inventory.find((i) => i.id === id)
+      const item = inventory.find((i) => i.id === id);
       if (item) {
         addStockMovement({
           itemId: id,
@@ -753,11 +842,11 @@ export function InventoryProvider({ children }) {
           reason: "Item removido do sistema",
           date: new Date().toISOString(),
           user: "Sistema",
-        })
+        });
       }
-      setInventory((prev) => prev.filter((item) => item.id !== id))
+      setInventory((prev) => prev.filter((item) => item.id !== id));
     }
-  }
+  };
 
   // Implementar outras funções CRUD de forma similar...
   const addSupplier = async (supplier) => {
@@ -779,69 +868,90 @@ export function InventoryProvider({ children }) {
             is_active: supplier.isActive,
           })
           .select()
-          .single()
+          .single();
 
-        if (error) throw error
+        if (error) throw error;
 
-        const newSupplier = convertSupplier(data)
-        setSuppliers((prev) => [...prev, newSupplier])
+        const newSupplier = convertSupplier(data);
+        setSuppliers((prev) => [...prev, newSupplier]);
       } catch (err) {
-        console.error("Erro ao adicionar fornecedor:", err)
-        throw err
+        console.error("Erro ao adicionar fornecedor:", err);
+        throw err;
       }
     } else {
-      const newSupplier = { ...supplier, id: Date.now().toString() }
-      setSuppliers((prev) => [...prev, newSupplier])
+      const newSupplier = { ...supplier, id: Date.now().toString() };
+      setSuppliers((prev) => [...prev, newSupplier]);
     }
-  }
+  };
 
   const updateSupplier = async (id, updates) => {
     if (isSupabaseConfigured && supabase) {
       try {
-        const updateData = {}
-        if (updates.name !== undefined) updateData.name = updates.name
-        if (updates.contact !== undefined) updateData.contact = updates.contact
-        if (updates.email !== undefined) updateData.email = updates.email
-        if (updates.phone !== undefined) updateData.phone = updates.phone
-        if (updates.address !== undefined) updateData.address = updates.address
-        if (updates.rating !== undefined) updateData.rating = updates.rating
-        if (updates.totalOrders !== undefined) updateData.total_orders = updates.totalOrders
-        if (updates.lastOrderDate !== undefined) updateData.last_order_date = updates.lastOrderDate
-        if (updates.paymentTerms !== undefined) updateData.payment_terms = updates.paymentTerms
-        if (updates.deliveryTime !== undefined) updateData.delivery_time = updates.deliveryTime
-        if (updates.isActive !== undefined) updateData.is_active = updates.isActive
+        const updateData = {};
+        if (updates.name !== undefined) updateData.name = updates.name;
+        if (updates.contact !== undefined) updateData.contact = updates.contact;
+        if (updates.email !== undefined) updateData.email = updates.email;
+        if (updates.phone !== undefined) updateData.phone = updates.phone;
+        if (updates.address !== undefined) updateData.address = updates.address;
+        if (updates.rating !== undefined) updateData.rating = updates.rating;
+        if (updates.totalOrders !== undefined)
+          updateData.total_orders = updates.totalOrders;
+        if (updates.lastOrderDate !== undefined)
+          updateData.last_order_date = updates.lastOrderDate;
+        if (updates.paymentTerms !== undefined)
+          updateData.payment_terms = updates.paymentTerms;
+        if (updates.deliveryTime !== undefined)
+          updateData.delivery_time = updates.deliveryTime;
+        if (updates.isActive !== undefined)
+          updateData.is_active = updates.isActive;
 
-        const { data, error } = await supabase.from("suppliers").update(updateData).eq("id", id).select().single()
+        const { data, error } = await supabase
+          .from("suppliers")
+          .update(updateData)
+          .eq("id", id)
+          .select()
+          .single();
 
-        if (error) throw error
+        if (error) throw error;
 
-        const updatedSupplier = convertSupplier(data)
-        setSuppliers((prev) => prev.map((supplier) => (supplier.id === id ? updatedSupplier : supplier)))
+        const updatedSupplier = convertSupplier(data);
+        setSuppliers((prev) =>
+          prev.map((supplier) =>
+            supplier.id === id ? updatedSupplier : supplier
+          )
+        );
       } catch (err) {
-        console.error("Erro ao atualizar fornecedor:", err)
-        throw err
+        console.error("Erro ao atualizar fornecedor:", err);
+        throw err;
       }
     } else {
-      setSuppliers((prev) => prev.map((supplier) => (supplier.id === id ? { ...supplier, ...updates } : supplier)))
+      setSuppliers((prev) =>
+        prev.map((supplier) =>
+          supplier.id === id ? { ...supplier, ...updates } : supplier
+        )
+      );
     }
-  }
+  };
 
   const deleteSupplier = async (id) => {
     if (isSupabaseConfigured && supabase) {
       try {
-        const { error } = await supabase.from("suppliers").delete().eq("id", id)
+        const { error } = await supabase
+          .from("suppliers")
+          .delete()
+          .eq("id", id);
 
-        if (error) throw error
+        if (error) throw error;
 
-        setSuppliers((prev) => prev.filter((supplier) => supplier.id !== id))
+        setSuppliers((prev) => prev.filter((supplier) => supplier.id !== id));
       } catch (err) {
-        console.error("Erro ao deletar fornecedor:", err)
-        throw err
+        console.error("Erro ao deletar fornecedor:", err);
+        throw err;
       }
     } else {
-      setSuppliers((prev) => prev.filter((supplier) => supplier.id !== id))
+      setSuppliers((prev) => prev.filter((supplier) => supplier.id !== id));
     }
-  }
+  };
 
   const addPurchaseOrder = async (order) => {
     if (isSupabaseConfigured && supabase) {
@@ -861,12 +971,12 @@ export function InventoryProvider({ children }) {
             created_by: order.createdBy,
           })
           .select()
-          .single()
+          .single();
 
-        if (error) throw error
+        if (error) throw error;
 
-        const newOrder = convertPurchaseOrder(data)
-        setPurchaseOrders((prev) => [...prev, newOrder])
+        const newOrder = convertPurchaseOrder(data);
+        setPurchaseOrders((prev) => [...prev, newOrder]);
 
         await addNotification({
           type: "status_pedido",
@@ -876,14 +986,17 @@ export function InventoryProvider({ children }) {
           read: false,
           priority: "baixa",
           actionRequired: false,
-        })
+        });
       } catch (err) {
-        console.error("Erro ao adicionar pedido:", err)
-        throw err
+        console.error("Erro ao adicionar pedido:", err);
+        throw err;
       }
     } else {
-      const newOrder = { ...order, id: `PED-2024-${String(purchaseOrders.length + 1).padStart(3, "0")}` }
-      setPurchaseOrders((prev) => [...prev, newOrder])
+      const newOrder = {
+        ...order,
+        id: `PED-2024-${String(purchaseOrders.length + 1).padStart(3, "0")}`,
+      };
+      setPurchaseOrders((prev) => [...prev, newOrder]);
 
       addNotification({
         type: "status_pedido",
@@ -893,31 +1006,45 @@ export function InventoryProvider({ children }) {
         read: false,
         priority: "baixa",
         actionRequired: false,
-      })
+      });
     }
-  }
+  };
 
   const updatePurchaseOrder = async (id, updates) => {
     if (isSupabaseConfigured && supabase) {
       try {
-        const updateData = {}
-        if (updates.supplier !== undefined) updateData.supplier = updates.supplier
-        if (updates.items !== undefined) updateData.items = updates.items
-        if (updates.totalAmount !== undefined) updateData.total_amount = updates.totalAmount
-        if (updates.status !== undefined) updateData.status = updates.status
-        if (updates.orderDate !== undefined) updateData.order_date = updates.orderDate
-        if (updates.expectedDelivery !== undefined) updateData.expected_delivery = updates.expectedDelivery
-        if (updates.actualDelivery !== undefined) updateData.actual_delivery = updates.actualDelivery
-        if (updates.notes !== undefined) updateData.notes = updates.notes
-        if (updates.priority !== undefined) updateData.priority = updates.priority
-        if (updates.createdBy !== undefined) updateData.created_by = updates.createdBy
+        const updateData = {};
+        if (updates.supplier !== undefined)
+          updateData.supplier = updates.supplier;
+        if (updates.items !== undefined) updateData.items = updates.items;
+        if (updates.totalAmount !== undefined)
+          updateData.total_amount = updates.totalAmount;
+        if (updates.status !== undefined) updateData.status = updates.status;
+        if (updates.orderDate !== undefined)
+          updateData.order_date = updates.orderDate;
+        if (updates.expectedDelivery !== undefined)
+          updateData.expected_delivery = updates.expectedDelivery;
+        if (updates.actualDelivery !== undefined)
+          updateData.actual_delivery = updates.actualDelivery;
+        if (updates.notes !== undefined) updateData.notes = updates.notes;
+        if (updates.priority !== undefined)
+          updateData.priority = updates.priority;
+        if (updates.createdBy !== undefined)
+          updateData.created_by = updates.createdBy;
 
-        const { data, error } = await supabase.from("purchase_orders").update(updateData).eq("id", id).select().single()
+        const { data, error } = await supabase
+          .from("purchase_orders")
+          .update(updateData)
+          .eq("id", id)
+          .select()
+          .single();
 
-        if (error) throw error
+        if (error) throw error;
 
-        const updatedOrder = convertPurchaseOrder(data)
-        setPurchaseOrders((prev) => prev.map((order) => (order.id === id ? updatedOrder : order)))
+        const updatedOrder = convertPurchaseOrder(data);
+        setPurchaseOrders((prev) =>
+          prev.map((order) => (order.id === id ? updatedOrder : order))
+        );
 
         if (updates.status) {
           await addNotification({
@@ -928,14 +1055,18 @@ export function InventoryProvider({ children }) {
             read: false,
             priority: "baixa",
             actionRequired: false,
-          })
+          });
         }
       } catch (err) {
-        console.error("Erro ao atualizar pedido:", err)
-        throw err
+        console.error("Erro ao atualizar pedido:", err);
+        throw err;
       }
     } else {
-      setPurchaseOrders((prev) => prev.map((order) => (order.id === id ? { ...order, ...updates } : order)))
+      setPurchaseOrders((prev) =>
+        prev.map((order) =>
+          order.id === id ? { ...order, ...updates } : order
+        )
+      );
 
       if (updates.status) {
         addNotification({
@@ -946,10 +1077,10 @@ export function InventoryProvider({ children }) {
           read: false,
           priority: "baixa",
           actionRequired: false,
-        })
+        });
       }
     }
-  }
+  };
 
   const addStockMovement = async (movement) => {
     if (isSupabaseConfigured && supabase) {
@@ -967,38 +1098,49 @@ export function InventoryProvider({ children }) {
             reference: movement.reference,
           })
           .select()
-          .single()
+          .single();
 
-        if (error) throw error
+        if (error) throw error;
 
-        const newMovement = convertStockMovement(data)
-        setStockMovements((prev) => [newMovement, ...prev.slice(0, 99)])
+        const newMovement = convertStockMovement(data);
+        setStockMovements((prev) => [newMovement, ...prev.slice(0, 99)]);
       } catch (err) {
-        console.error("Erro ao adicionar movimentação:", err)
-        throw err
+        console.error("Erro ao adicionar movimentação:", err);
+        throw err;
       }
     } else {
-      const newMovement = { ...movement, id: Date.now().toString() }
-      setStockMovements((prev) => [newMovement, ...prev])
+      const newMovement = { ...movement, id: Date.now().toString() };
+      setStockMovements((prev) => [newMovement, ...prev]);
     }
-  }
+  };
 
   const markNotificationRead = async (id) => {
     if (isSupabaseConfigured && supabase) {
       try {
-        const { error } = await supabase.from("notifications").update({ read: true }).eq("id", id)
+        const { error } = await supabase
+          .from("notifications")
+          .update({ read: true })
+          .eq("id", id);
 
-        if (error) throw error
+        if (error) throw error;
 
-        setNotifications((prev) => prev.map((notif) => (notif.id === id ? { ...notif, read: true } : notif)))
+        setNotifications((prev) =>
+          prev.map((notif) =>
+            notif.id === id ? { ...notif, read: true } : notif
+          )
+        );
       } catch (err) {
-        console.error("Erro ao marcar notificação como lida:", err)
-        throw err
+        console.error("Erro ao marcar notificação como lida:", err);
+        throw err;
       }
     } else {
-      setNotifications((prev) => prev.map((notif) => (notif.id === id ? { ...notif, read: true } : notif)))
+      setNotifications((prev) =>
+        prev.map((notif) =>
+          notif.id === id ? { ...notif, read: true } : notif
+        )
+      );
     }
-  }
+  };
 
   const addNotification = async (notification) => {
     if (isSupabaseConfigured && supabase) {
@@ -1015,59 +1157,64 @@ export function InventoryProvider({ children }) {
             action_required: notification.actionRequired,
           })
           .select()
-          .single()
+          .single();
 
-        if (error) throw error
+        if (error) throw error;
 
-        const newNotification = convertNotification(data)
-        setNotifications((prev) => [newNotification, ...prev.slice(0, 49)])
+        const newNotification = convertNotification(data);
+        setNotifications((prev) => [newNotification, ...prev.slice(0, 49)]);
       } catch (err) {
-        console.error("Erro ao adicionar notificação:", err)
-        throw err
+        console.error("Erro ao adicionar notificação:", err);
+        throw err;
       }
     } else {
-      const newNotification = { ...notification, id: Date.now().toString() }
-      setNotifications((prev) => [newNotification, ...prev])
+      const newNotification = { ...notification, id: Date.now().toString() };
+      setNotifications((prev) => [newNotification, ...prev]);
     }
-  }
+  };
 
   // Funções utilitárias
   const getStockPrediction = (itemId, days) => {
-    const item = inventory.find((i) => i.id === itemId)
-    if (!item) return 0
+    const item = inventory.find((i) => i.id === itemId);
+    if (!item) return 0;
 
-    const predictedUsage = item.avgDailyUsage * days
-    return Math.max(0, item.currentStock - predictedUsage)
-  }
+    const predictedUsage = item.avgDailyUsage * days;
+    return Math.max(0, item.currentStock - predictedUsage);
+  };
 
   const getLowStockItems = () => {
-    return inventory.filter((item) => item.currentStock <= item.minStock)
-  }
+    return inventory.filter((item) => item.currentStock <= item.minStock);
+  };
 
   const getExpiringItems = (days) => {
-    const today = new Date()
+    const today = new Date();
     return inventory.filter((item) => {
-      if (!item.expiryDate) return false
-      const expiryDate = new Date(item.expiryDate)
-      const daysUntilExpiry = Math.ceil((expiryDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
-      return daysUntilExpiry <= days && daysUntilExpiry > 0
-    })
-  }
+      if (!item.expiryDate) return false;
+      const expiryDate = new Date(item.expiryDate);
+      const daysUntilExpiry = Math.ceil(
+        (expiryDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
+      );
+      return daysUntilExpiry <= days && daysUntilExpiry > 0;
+    });
+  };
 
   const refreshData = async () => {
-    await loadData()
-  }
+    await loadData();
+  };
 
   // Auto-gerar notificações para estoque baixo e itens vencendo
   useEffect(() => {
-    if (inventory.length === 0) return
+    if (inventory.length === 0) return;
 
     const checkLowStock = async () => {
-      const lowStockItems = getLowStockItems()
+      const lowStockItems = getLowStockItems();
       for (const item of lowStockItems) {
         const existingNotification = notifications.find(
-          (n) => n.type === "estoque_baixo" && n.message.includes(item.name) && !n.read,
-        )
+          (n) =>
+            n.type === "estoque_baixo" &&
+            n.message.includes(item.name) &&
+            !n.read
+        );
         if (!existingNotification) {
           await addNotification({
             type: "estoque_baixo",
@@ -1075,23 +1222,27 @@ export function InventoryProvider({ children }) {
             message: `${item.name} está abaixo do nível mínimo (${item.currentStock}/${item.minStock})`,
             date: new Date().toISOString(),
             read: false,
-            priority: item.currentStock <= item.minStock * 0.5 ? "alta" : "media",
+            priority:
+              item.currentStock <= item.minStock * 0.5 ? "alta" : "media",
             actionRequired: true,
-          })
+          });
         }
       }
-    }
+    };
 
     const checkExpiring = async () => {
-      const expiringItems = getExpiringItems(14)
+      const expiringItems = getExpiringItems(14);
       for (const item of expiringItems) {
         const existingNotification = notifications.find(
-          (n) => n.type === "vencimento" && n.message.includes(item.name) && !n.read,
-        )
+          (n) =>
+            n.type === "vencimento" && n.message.includes(item.name) && !n.read
+        );
         if (!existingNotification && item.expiryDate) {
-          const today = new Date()
-          const expiryDate = new Date(item.expiryDate)
-          const daysUntilExpiry = Math.ceil((expiryDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
+          const today = new Date();
+          const expiryDate = new Date(item.expiryDate);
+          const daysUntilExpiry = Math.ceil(
+            (expiryDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
+          );
 
           await addNotification({
             type: "vencimento",
@@ -1101,18 +1252,22 @@ export function InventoryProvider({ children }) {
             read: false,
             priority: daysUntilExpiry <= 7 ? "alta" : "media",
             actionRequired: true,
-          })
+          });
         }
       }
-    }
+    };
 
-    checkLowStock()
-    checkExpiring()
-  }, [inventory])
+    checkLowStock();
+    checkExpiring();
+  }, [inventory]);
 
   return (
     <InventoryContext.Provider
       value={{
+        // Admin auth 
+        admin,
+        setAdmin,
+        // inventory auth
         inventory,
         suppliers,
         purchaseOrders,
@@ -1140,13 +1295,15 @@ export function InventoryProvider({ children }) {
     >
       {children}
     </InventoryContext.Provider>
-  )
+  );
 }
 
 export function useInventory() {
-  const context = useContext(InventoryContext)
+  const context = useContext(InventoryContext);
   if (context === undefined) {
-    throw new Error("useInventory deve ser usado dentro de um InventoryProvider")
+    throw new Error(
+      "useInventory deve ser usado dentro de um InventoryProvider"
+    );
   }
-  return context
+  return context;
 }

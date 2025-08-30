@@ -1,6 +1,8 @@
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import "./globals.css";
+import { InventoryProvider } from "@/contexts/inventory-context";
+import { ThemeProvider } from "@/contexts/theme-context";
 
 export const metadata = {
   title: "Inventory Management System",
@@ -19,7 +21,11 @@ html {
 }
         `}</style>
       </head>
-      <body>{children}</body>
+      <body>
+        <InventoryProvider>
+          <ThemeProvider>{children}</ThemeProvider>
+        </InventoryProvider>
+      </body>
     </html>
   );
 }

@@ -41,17 +41,17 @@ function CoffeeLogoIcon() {
   return (
     <div className="relative h-6 w-6">
       {/* Círculo externo com gradiente */}
-      <div className="absolute inset-0 rounded-full bg-gradient-to-br from-amber-400 via-amber-500 to-amber-600">
+      <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600">
         <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-transparent via-white/20 to-transparent"></div>
       </div>
 
       {/* Círculo interno */}
-      <div className="absolute inset-0.5 rounded-full bg-gradient-to-br from-amber-800 to-amber-900 flex items-center justify-center">
+      <div className="absolute inset-0.5 rounded-full bg-gradient-to-br from-blue-800 to-blue-900 flex items-center justify-center">
         {/* Grão de café estilizado */}
         <div className="relative">
-          <div className="w-3 h-4 bg-gradient-to-b from-amber-200 to-amber-300 rounded-full transform rotate-12">
+          <div className="w-3 h-4 bg-gradient-to-b from-blue-200 to-blue-300 rounded-full transform rotate-12">
             {/* Linha central do grão */}
-            <div className="absolute top-0.5 left-1/2 transform -translate-x-1/2 w-0.5 h-3 bg-amber-800 rounded-full"></div>
+            <div className="absolute top-0.5 left-1/2 transform -translate-x-1/2 w-0.5 h-3 bg-blue-800 rounded-full"></div>
           </div>
         </div>
       </div>
@@ -188,7 +188,7 @@ export default function SystemSettings() {
         <div className="flex items-center space-x-4">
           <Button
             onClick={handleSaveSettings}
-            className="bg-amber-600 hover:bg-amber-700"
+            className="bg-blue-600 hover:bg-blue-700"
           >
             <Save className="h-4 w-4 mr-2" />
             Save Changes
@@ -259,31 +259,31 @@ export default function SystemSettings() {
         <TabsList className="grid w-full grid-cols-5 bg-gray-900 border border-gray-800">
           <TabsTrigger
             value="geral"
-            className="data-[state=active]:bg-amber-600"
+            className="data-[state=active]:bg-blue-600"
           >
             General
           </TabsTrigger>
           <TabsTrigger
             value="notificacoes"
-            className="data-[state=active]:bg-amber-600"
+            className="data-[state=active]:bg-blue-600"
           >
             Notifications
           </TabsTrigger>
           <TabsTrigger
             value="whatsappbot"
-            className="data-[state=active]:bg-amber-600"
+            className="data-[state=active]:bg-blue-600"
           >
             WhatsApp Bot
           </TabsTrigger>
           <TabsTrigger
             value="seguranca"
-            className="data-[state=active]:bg-amber-600"
+            className="data-[state=active]:bg-blue-600"
           >
             Security
           </TabsTrigger>
           <TabsTrigger
             value="backup"
-            className="data-[state=active]:bg-amber-600"
+            className="data-[state=active]:bg-blue-600"
           >
             Backup
           </TabsTrigger>

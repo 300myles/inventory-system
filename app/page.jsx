@@ -1,23 +1,36 @@
-"use client"
-import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Package, TrendingUp, Users, BookCheck, Settings, Bell, Download, HomeIcon, PackagePlus, HistoryIcon } from "lucide-react"
-import Dashboard from "@/components/dashboard"
-import InventoryManager from "@/components/inventory-manager"
-import PurchaseOrders from "@/components/purchase-orders"
-import Reports from "@/components/reports"
-import SystemSettings from "@/components/system-settings"
-import Notifications from "@/components/notifications"
-import { InventoryProvider } from "@/contexts/inventory-context"
-import { ThemeProvider, useTheme } from "@/contexts/theme-context"
-import { ThemeToggle } from "@/components/theme-toggle"
-import { Button } from "@/components/ui/button"
+"use client";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Package,
+  TrendingUp,
+  Users,
+  BookCheck,
+  Settings,
+  Bell,
+  Download,
+  HomeIcon,
+  PackagePlus,
+  HistoryIcon,
+} from "lucide-react";
+import Dashboard from "@/components/dashboard";
+import InventoryManager from "@/components/inventory-manager";
+import PurchaseOrders from "@/components/purchase-orders";
+import Reports from "@/components/reports";
+import SystemSettings from "@/components/system-settings";
+import Notifications from "@/components/notifications";
+import { ThemeProvider, useTheme } from "@/contexts/theme-context";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import { useInventory } from "@/contexts/inventory-context";
+import { useEffect } from "react";
 
 // ElaboratedCoffeeLogo Component
 function ElaboratedCoffeeLogo({ size = "large" }) {
-  const { theme } = useTheme()
-  const logoSize = size === "large" ? "h-12 w-12" : "h-6 w-6"
-  const textSize = size === "large" ? "text-2xl" : "text-lg"
+  const { theme } = useTheme();
+  const logoSize = size === "large" ? "h-12 w-12" : "h-6 w-6";
+  const textSize = size === "large" ? "text-2xl" : "text-lg";
 
   return (
     <div className="flex items-center space-x-3">
@@ -57,20 +70,35 @@ function ElaboratedCoffeeLogo({ size = "large" }) {
 
       {size === "large" && (
         <div>
-          <h1 className={`${textSize} font-bold tracking-wide ${theme === "dark" ? "text-gray-100" : "text-gray-900"}`}>
+          <h1
+            className={`${textSize} font-bold tracking-wide ${
+              theme === "dark" ? "text-gray-100" : "text-gray-900"
+            }`}
+          >
             TC
           </h1>
-          <p className={`text-sm font-medium ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
+          <p
+            className={`text-sm font-medium ${
+              theme === "dark" ? "text-gray-400" : "text-gray-600"
+            }`}
+          >
             Inventory Management System
           </p>
         </div>
       )}
     </div>
-  )
+  );
 }
 
+<<<<<<< HEAD
 function OliverCoffeeInventorySystemContent() {
   const { theme } = useTheme();
+=======
+export default function OliverCoffeeInventorySystemContent() {
+  const { theme } = useTheme();
+  const router = useRouter();
+  const { admin } = useInventory();
+>>>>>>> d9ed2a4 (update)
 
   const exportData = () => {
     // Funcionalidade de exportação de dados
@@ -79,14 +107,24 @@ function OliverCoffeeInventorySystemContent() {
       system: "Inventory System TC",
       version: "2.0.0",
       theme: theme,
-    }
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement("a")
-    a.href = url
-    a.download = `oliver-coffee-backup-${new Date().toISOString().split("T")[0]}.json`
-    a.click()
-  }
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `oliver-coffee-backup-${
+      new Date().toISOString().split("T")[0]
+    }.json`;
+    a.click();
+  };
+
+  useEffect(() => {
+    if (!admin) router.replace("/login");
+  }, [admin]);
+
+  if (!admin) return;
 
   return (
     <div
@@ -271,21 +309,11 @@ function OliverCoffeeInventorySystemContent() {
                 theme === "dark" ? "text-gray-400" : "text-gray-600"
               }`}
             >
-              Version 1.0 
+              Version 1.0
             </div>
           </div>
         </div>
       </footer>
     </div>
   );
-}
-
-export default function OliverCoffeeInventorySystem() {
-  return (
-    <ThemeProvider>
-      <InventoryProvider>
-        <OliverCoffeeInventorySystemContent />
-      </InventoryProvider>
-    </ThemeProvider>
-  )
 }
