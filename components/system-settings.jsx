@@ -85,8 +85,8 @@ export default function SystemSettings() {
     retencaoDados: 365,
     modoManutencao: false,
 
-    // Configurações de Segurança
-    timeoutSessao: 30,
+    // Security Settings
+    timeoutSession: 30,
     expiracaoSenha: 90,
     autenticacaoDoisFatores: false,
     logAuditoria: true,
@@ -253,9 +253,9 @@ export default function SystemSettings() {
         </Card>
       </div>
 
-      {/* Abas de Configurações */}
+      {/* Settinngs Page Nav Buttons */}
       <Tabs defaultValue="geral" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5 bg-gray-900 border border-gray-800">
+        <TabsList className="cursor-pointer grid w-full grid-cols-4 bg-gray-900 border border-gray-800">
           <TabsTrigger
             value="geral"
             className="data-[state=active]:bg-blue-600"
@@ -280,12 +280,6 @@ export default function SystemSettings() {
           >
             Security
           </TabsTrigger>
-          <TabsTrigger
-            value="backup"
-            className="data-[state=active]:bg-blue-600"
-          >
-            Backup
-          </TabsTrigger>
         </TabsList>
 
         {/* Configurações Gerais */}
@@ -297,7 +291,7 @@ export default function SystemSettings() {
                 General Settings
               </CardTitle>
               <CardDescription className="text-gray-400">
-                Basic setup for your coffee shop
+                Basic setup for your system
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -329,17 +323,15 @@ export default function SystemSettings() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-gray-800 border-gray-700">
-                      <SelectItem value="America/Sao_Paulo">
-                        Brasilia time
-                      </SelectItem>
+                      <SelectItem value="America/Sao_Paulo">African</SelectItem>
                       <SelectItem value="America/Manaus">
-                        Amazonas time
+                        West African
                       </SelectItem>
                       <SelectItem value="America/Noronha">
-                        Fernando de Noronha timetable
+                        South African
                       </SelectItem>
                       <SelectItem value="America/Rio_Branco">
-                        Acre time
+                        North African
                       </SelectItem>
                     </SelectContent>
                   </Select>
@@ -389,7 +381,7 @@ export default function SystemSettings() {
               </div>
             </CardContent>
 
-            <CardHeader>
+            {/* <CardHeader>
               <CardTitle className="flex items-center gap-2 text-gray-200">
                 <Settings className="h-5 w-5 text-purple-400" />
                 Configuração do whatsappbot
@@ -454,7 +446,7 @@ export default function SystemSettings() {
                   Otimizar Banco de Dados
                 </Button>
               </div>
-            </CardContent>
+            </CardContent> */}
           </Card>
         </TabsContent>
 
@@ -467,18 +459,16 @@ export default function SystemSettings() {
                 Notification Settings
               </CardTitle>
               <CardDescription className="text-gray-400">
-                Configure alertas e preferências de notificação
+                Configure alerts and notification preferences
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <Label className="text-gray-200">
-                      Alertas de Estoque Baixo
-                    </Label>
+                    <Label className="text-gray-200">Out Of Stock Alerts</Label>
                     <p className="text-sm text-gray-400">
-                      Receba notificações quando itens estiverem em baixa
+                      Get notified when items are out of stock
                     </p>
                   </div>
                   <Switch
@@ -491,45 +481,9 @@ export default function SystemSettings() {
                 <Separator className="bg-gray-800" />
                 <div className="flex items-center justify-between">
                   <div>
-                    <Label className="text-gray-200">
-                      Alertas de Vencimento
-                    </Label>
+                    <Label className="text-gray-200">Email Notifications</Label>
                     <p className="text-sm text-gray-400">
-                      Receba notificações sobre itens próximos ao vencimento
-                    </p>
-                  </div>
-                  <Switch
-                    checked={settings.alertasVencimento}
-                    onCheckedChange={(checked) =>
-                      handleSettingChange("alertasVencimento", checked)
-                    }
-                  />
-                </div>
-                <Separator className="bg-gray-800" />
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label className="text-gray-200">
-                      Alertas de Status de Pedidos
-                    </Label>
-                    <p className="text-sm text-gray-400">
-                      Receba notificações sobre atualizações de pedidos
-                    </p>
-                  </div>
-                  <Switch
-                    checked={settings.alertasStatusPedido}
-                    onCheckedChange={(checked) =>
-                      handleSettingChange("alertasStatusPedido", checked)
-                    }
-                  />
-                </div>
-                <Separator className="bg-gray-800" />
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label className="text-gray-200">
-                      Notificações por Email
-                    </Label>
-                    <p className="text-sm text-gray-400">
-                      Receba notificações via email
+                      Receive Notifications via email
                     </p>
                   </div>
                   <Switch
@@ -543,7 +497,7 @@ export default function SystemSettings() {
 
               <div className="space-y-2">
                 <Label htmlFor="limiteAlerta" className="text-gray-200">
-                  Limite de Alerta (%)
+                  Alert Threshold (%)
                 </Label>
                 <Input
                   id="limiteAlerta"
@@ -558,8 +512,8 @@ export default function SystemSettings() {
                   className="bg-gray-800 border-gray-700 text-gray-200"
                 />
                 <p className="text-sm text-gray-400">
-                  Disparar alertas de estoque baixo quando o inventário cair
-                  abaixo desta porcentagem
+                  Trigger out of stock alerts when inventory drops below this
+                  percentage
                 </p>
               </div>
             </CardContent>
@@ -684,31 +638,31 @@ export default function SystemSettings() {
           </Card>
         </TabsContent>
 
-        {/* Configurações de Segurança */}
+        {/* Security Settings */}
         <TabsContent value="seguranca">
           <Card className="bg-gray-900 border-gray-800">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-gray-200">
                 <Shield className="h-5 w-5 text-green-400" />
-                Configurações de Segurança
+                Security Settings
               </CardTitle>
               <CardDescription className="text-gray-400">
-                Configure segurança e controles de acesso
+                Configure security and access controls
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="timeoutSessao" className="text-gray-200">
-                    Timeout de Sessão (minutos)
+                  <Label htmlFor="timeoutSession" className="text-gray-200">
+                    Session Timeout (minutes)
                   </Label>
                   <Input
-                    id="timeoutSessao"
+                    id="timeoutSession"
                     type="number"
-                    value={settings.timeoutSessao}
+                    value={settings.timeoutSession}
                     onChange={(e) =>
                       handleSettingChange(
-                        "timeoutSessao",
+                        "timeoutSession",
                         Number.parseInt(e.target.value)
                       )
                     }
@@ -717,7 +671,7 @@ export default function SystemSettings() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="expiracaoSenha" className="text-gray-200">
-                    Expiração de Senha (dias)
+                    {settings.expiracaoSenha} Password Expiration (days)
                   </Label>
                   <Input
                     id="expiracaoSenha"
@@ -738,10 +692,10 @@ export default function SystemSettings() {
                 <div className="flex items-center justify-between">
                   <div>
                     <Label className="text-gray-200">
-                      Autenticação de Dois Fatores
+                      Two-Factor Authentication
                     </Label>
                     <p className="text-sm text-gray-400">
-                      Exigir 2FA para todas as contas de usuário
+                      Require 2FA for all user accounts
                     </p>
                   </div>
                   <Switch
@@ -754,10 +708,9 @@ export default function SystemSettings() {
                 <Separator className="bg-gray-800" />
                 <div className="flex items-center justify-between">
                   <div>
-                    <Label className="text-gray-200">Log de Auditoria</Label>
+                    <Label className="text-gray-200">Audit Log</Label>
                     <p className="text-sm text-gray-400">
-                      Registrar todas as ações do usuário para auditoria de
-                      segurança
+                      Log all user actions for security auditing
                     </p>
                   </div>
                   <Switch
@@ -772,113 +725,6 @@ export default function SystemSettings() {
           </Card>
         </TabsContent>
 
-        {/* Configurações de Backup */}
-        <TabsContent value="backup">
-          <Card className="bg-gray-900 border-gray-800">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-gray-200">
-                <Database className="h-5 w-5 text-blue-400" />
-                Backup e Gestão de Dados
-              </CardTitle>
-              <CardDescription className="text-gray-400">
-                Configure configurações de backup e opções de exportação de
-                dados
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label className="text-gray-200">Backup Automático</Label>
-                    <p className="text-sm text-gray-400">
-                      Ativar backups automáticos do whatsappbot
-                    </p>
-                  </div>
-                  <Switch
-                    checked={settings.backupAutomatico}
-                    onCheckedChange={(checked) =>
-                      handleSettingChange("backupAutomatico", checked)
-                    }
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="frequenciaBackup" className="text-gray-200">
-                    Frequência do Backup
-                  </Label>
-                  <Select
-                    value={settings.frequenciaBackup}
-                    onValueChange={(value) =>
-                      handleSettingChange("frequenciaBackup", value)
-                    }
-                  >
-                    <SelectTrigger className="bg-gray-800 border-gray-700 text-gray-200">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="bg-gray-800 border-gray-700">
-                      <SelectItem value="horario">A cada hora</SelectItem>
-                      <SelectItem value="diario">Diário</SelectItem>
-                      <SelectItem value="semanal">Semanal</SelectItem>
-                      <SelectItem value="mensal">Mensal</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <Separator className="bg-gray-800" />
-
-              <div className="space-y-4">
-                <h4 className="font-medium text-gray-200">
-                  Exportação e Importação de Dados
-                </h4>
-                <div className="flex gap-4">
-                  <Button
-                    variant="outline"
-                    onClick={handleExportData}
-                    className="border-gray-700 hover:bg-gray-800 text-gray-200"
-                  >
-                    <Download className="h-4 w-4 mr-2" />
-                    Exportar Dados
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="border-gray-700 hover:bg-gray-800 text-gray-200"
-                  >
-                    <Upload className="h-4 w-4 mr-2" />
-                    Importar Dados
-                  </Button>
-                </div>
-              </div>
-
-              <div className="bg-gray-800 p-4 rounded-lg">
-                <h4 className="font-medium text-gray-200 mb-2">
-                  Status do Backup
-                </h4>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Último Backup:</span>
-                    <span className="text-green-400">
-                      {statuswhatsappbot.ultimoBackup}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Status:</span>
-                    <Badge
-                      variant="outline"
-                      className="bg-green-900 text-green-300 border-green-700"
-                    >
-                      Concluído
-                    </Badge>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Próximo Backup:</span>
-                    <span className="text-gray-300">Amanhã 03:00</span>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
       </Tabs>
     </div>
   );

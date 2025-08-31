@@ -211,7 +211,7 @@ export default function Notifications() {
             {filteredNotifications.length === 0 ? (
               <div className="text-center py-8">
                 <Bell className="h-12 w-12 text-gray-600 mx-auto mb-4" />
-                <p className="text-gray-400">Nenhuma notificação encontrada</p>
+                <p className="text-gray-400">No notifications found</p>
               </div>
             ) : (
               filteredNotifications.map((notification) => (
