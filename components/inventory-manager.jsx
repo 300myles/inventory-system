@@ -75,11 +75,10 @@ export default function InventoryManager() {
     new Set(inventory.map((item) => item.category))
   );
 
-  const filteredInventory = inventory.filter((item) => {
+  const filteredInventory = inventory?.filter((item) => {
     const matchesSearch =
-      item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.productID.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.barcode?.toLowerCase().includes(searchTerm.toLowerCase());
+      item?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item?.description?.toLowerCase().includes(searchTerm.toLowerCase())
 
     const matchesCategory =
       categoryFilter === "all" || item.category === categoryFilter;
@@ -393,8 +392,8 @@ export default function InventoryManager() {
                 }`}
               >
                 <SelectItem value="all">Items Category</SelectItem>
-                {categories.map((category) => (
-                  <SelectItem key={category} value={category}>
+                {categories.map((category, id) => (
+                  <SelectItem key={id} value={category}>
                     {category}
                   </SelectItem>
                 ))}
@@ -457,7 +456,7 @@ export default function InventoryManager() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredInventory.map((item) => {
+                {filteredInventory.map((item, id) => {
                   const itemStatus = getItemStatus(item);
                   const stockValue = item.currentStock * item.costPerUnit;
                   const prediction7Days = getStockPrediction(item.id, 7);
@@ -465,7 +464,7 @@ export default function InventoryManager() {
 
                   return (
                     <TableRow
-                      key={item.id}
+                      key={id}
                       className="border-gray-800 hover:bg-gray-800/50"
                     >
                       <TableCell>

@@ -1011,7 +1011,7 @@ export function InventoryProvider({ children }) {
   };
 
   const getLowStockItems = () => {
-    return inventory.filter((item) => item.currentStock <= item.minStock);
+    return inventory?.filter((item) => item.currentStock <= item.minStock);
   };
 
   const getExpiringItems = (days) => {
