@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
+import { getAdmin } from "@/lib/userActions";
 
 const InventoryContext = createContext(null);
 
@@ -288,9 +289,9 @@ export function InventoryProvider({ children }) {
   const [error, setError] = useState(null);
 
   // admin authentication
-  // useState(() => {
-  //
-  // }, [admin]);
+  useEffect(() => {
+    verifyAdmin();
+  }, []);
 
   // Funções de conversão para Supabase
   const convertInventoryItem = (item) => ({
@@ -442,7 +443,6 @@ export function InventoryProvider({ children }) {
   const addInventoryItem = async (item) => {
     if (isSupabaseConfigured && supabase) {
       try {
-<<<<<<< HEAD
         const { data, error } = await supabase
           .from("inventory_items")
           .insert({
@@ -469,9 +469,7 @@ export function InventoryProvider({ children }) {
           .single();
 
         if (error) throw error;
-=======
        const response = await fetch("", )
->>>>>>> 5a84c28 (update)
 
         const newItem = convertInventoryItem(data);
         setInventory((prev) => [...prev, newItem]);
@@ -1014,65 +1012,78 @@ export function InventoryProvider({ children }) {
   };
 
   // Auto-gerar notificações para estoque baixo e itens vencendo
-  useEffect(() => {
-    if (inventory.length === 0) return;
+  // useEffect(() => {
+  //   if (inventory.length === 0) return;
 
-    const checkLowStock = async () => {
-      const lowStockItems = getLowStockItems();
-      for (const item of lowStockItems) {
-        const existingNotification = notifications.find(
-          (n) =>
-            n.type === "estoque_baixo" &&
-            n.message.includes(item.name) &&
-            !n.read
-        );
-        if (!existingNotification) {
-          await addNotification({
-            type: "estoque_baixo",
-            title: "Low  Stock Alert",
-            message: `${item.name} está abaixo do nível mínimo (${item.currentStock}/${item.minStock})`,
-            date: new Date().toISOString(),
-            read: false,
-            priority:
-              item.currentStock <= item.minStock * 0.5
-                ? "HighPriority"
-                : "media",
-            actionRequired: true,
-          });
-        }
+  //   const checkLowStock = async () => {
+  //     const lowStockItems = getLowStockItems();
+  //     for (const item of lowStockItems) {
+  //       const existingNotification = notifications.find(
+  //         (n) =>
+  //           n.type === "estoque_baixo" &&
+  //           n.message.includes(item.name) &&
+  //           !n.read
+  //       );
+  //       if (!existingNotification) {
+  //         await addNotification({
+  //           type: "estoque_baixo",
+  //           title: "Low  Stock Alert",
+  //           message: `${item.name} está abaixo do nível mínimo (${item.currentStock}/${item.minStock})`,
+  //           date: new Date().toISOString(),
+  //           read: false,
+  //           priority:
+  //             item.currentStock <= item.minStock * 0.5
+  //               ? "HighPriority"
+  //               : "media",
+  //           actionRequired: true,
+  //         });
+  //       }
+  //     }
+  //   };
+
+  //   const checkExpiring = async () => {
+  //     const expiringItems = getExpiringItems(14);
+  //     for (const item of expiringItems) {
+  //       const existingNotification = notifications.find(
+  //         (n) =>
+  //           n.type === "vencimento" && n.message.includes(item.name) && !n.read
+  //       );
+  //       if (!existingNotification && item.uploadedDate) {
+  //         const today = new Date();
+  //         const uploadedDate = new Date(item.uploadedDate);
+  //         const daysUntilExpiry = Math.ceil(
+  //           (uploadedDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
+  //         );
+
+  //         await addNotification({
+  //           type: "vencimento",
+  //           title: "Aviso de Vencimento",
+  //           message: `${item.name} vence em ${daysUntilExpiry} dias (${item.uploadedDate})`,
+  //           date: new Date().toISOString(),
+  //           read: false,
+  //           priority: daysUntilExpiry <= 7 ? "HighPriority" : "media",
+  //           actionRequired: true,
+  //         });
+  //       }
+  //     }
+  //   };
+
+  //   checkLowStock();
+  //   checkExpiring();
+  // }, [inventory]);
+
+  const verifyAdmin = async () => {
+    try {
+      const data = await getAdmin();
+      if (data?.success) {
+        setAdmin(data.admin);
       }
-    };
-
-    const checkExpiring = async () => {
-      const expiringItems = getExpiringItems(14);
-      for (const item of expiringItems) {
-        const existingNotification = notifications.find(
-          (n) =>
-            n.type === "vencimento" && n.message.includes(item.name) && !n.read
-        );
-        if (!existingNotification && item.uploadedDate) {
-          const today = new Date();
-          const uploadedDate = new Date(item.uploadedDate);
-          const daysUntilExpiry = Math.ceil(
-            (uploadedDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
-          );
-
-          await addNotification({
-            type: "vencimento",
-            title: "Aviso de Vencimento",
-            message: `${item.name} vence em ${daysUntilExpiry} dias (${item.uploadedDate})`,
-            date: new Date().toISOString(),
-            read: false,
-            priority: daysUntilExpiry <= 7 ? "HighPriority" : "media",
-            actionRequired: true,
-          });
-        }
-      }
-    };
-
-    checkLowStock();
-    checkExpiring();
-  }, [inventory]);
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <InventoryContext.Provider

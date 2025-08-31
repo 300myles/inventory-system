@@ -11,7 +11,7 @@ import { useInventory } from "@/contexts/inventory-context";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { admin, setAdmin } = useInventory();
+  const { admin, setAdmin, loading } = useInventory();
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -59,12 +59,10 @@ export default function LoginPage() {
       setIsSubmitting(false);
     }
   };
-  
 
   useEffect(() => {
-    if (admin !== null) router.replace("/");
+    if (!loading && admin !== null) router.replace("/");
     console.log("login", admin);
-    
   }, []);
 
   return (

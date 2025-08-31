@@ -93,7 +93,7 @@ function ElaboratedCoffeeLogo({ size = "large" }) {
 export default function OliverCoffeeInventorySystemContent() {
   const { theme } = useTheme();
   const router = useRouter();
-  const { admin } = useInventory();
+  const { admin, loading } = useInventory();
 
   const exportData = () => {
     // Funcionalidade de exportação de dados
@@ -116,10 +116,10 @@ export default function OliverCoffeeInventorySystemContent() {
   };
 
   useEffect(() => {
-    if (admin === null) router.replace("/login");
+    if (!loading && admin === null) router.replace("/login");
   }, [admin]);
 
-  if (admin === null) return;
+  if (loading && admin === null) return;
 
   return (
     <div
