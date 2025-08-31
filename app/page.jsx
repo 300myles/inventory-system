@@ -116,10 +116,10 @@ export default function OliverCoffeeInventorySystemContent() {
   };
 
   useEffect(() => {
-    if (!admin) router.replace("/login");
+    if (admin === null) router.replace("/login");
   }, [admin]);
 
-  if (!admin) return;
+  if (admin === null) return;
 
   return (
     <div

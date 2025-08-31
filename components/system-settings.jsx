@@ -85,8 +85,8 @@ export default function SystemSettings() {
     retencaoDados: 365,
     modoManutencao: false,
 
-    // Configurações de Segurança
-    timeoutSessao: 30,
+    // Security Settings
+    timeoutSession: 30,
     expiracaoSenha: 90,
     autenticacaoDoisFatores: false,
     logAuditoria: true,
@@ -684,31 +684,32 @@ export default function SystemSettings() {
           </Card>
         </TabsContent>
 
-        {/* Configurações de Segurança */}
+        {/* Security Settings */}
         <TabsContent value="seguranca">
           <Card className="bg-gray-900 border-gray-800">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-gray-200">
                 <Shield className="h-5 w-5 text-green-400" />
-                Configurações de Segurança
+                Security Settings
               </CardTitle>
               <CardDescription className="text-gray-400">
-                Configure segurança e controles de acesso
+              Configure security and access controls
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="timeoutSessao" className="text-gray-200">
-                    Timeout de Sessão (minutos)
+                  <Label htmlFor="timeoutSession" className="text-gray-200">
+                  Session Timeout (minutes)
                   </Label>
                   <Input
-                    id="timeoutSessao"
+                    id="timeoutSession"
                     type="number"
-                    value={settings.timeoutSessao}
+                    value={settings.timeoutSession}
+                    minvalue={30}
                     onChange={(e) =>
                       handleSettingChange(
-                        "timeoutSessao",
+                        "timeoutSession",
                         Number.parseInt(e.target.value)
                       )
                     }
@@ -717,12 +718,13 @@ export default function SystemSettings() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="expiracaoSenha" className="text-gray-200">
-                    Expiração de Senha (dias)
+                  Password Expiration (days)
                   </Label>
                   <Input
                     id="expiracaoSenha"
                     type="number"
                     value={settings.expiracaoSenha}
+                    minvalue={10}
                     onChange={(e) =>
                       handleSettingChange(
                         "expiracaoSenha",
@@ -738,10 +740,10 @@ export default function SystemSettings() {
                 <div className="flex items-center justify-between">
                   <div>
                     <Label className="text-gray-200">
-                      Autenticação de Dois Fatores
+                    Two-Factor Authentication
                     </Label>
                     <p className="text-sm text-gray-400">
-                      Exigir 2FA para todas as contas de usuário
+                    Require 2FA for all user accounts
                     </p>
                   </div>
                   <Switch
@@ -754,10 +756,9 @@ export default function SystemSettings() {
                 <Separator className="bg-gray-800" />
                 <div className="flex items-center justify-between">
                   <div>
-                    <Label className="text-gray-200">Log de Auditoria</Label>
+                    <Label className="text-gray-200">Audit Log</Label>
                     <p className="text-sm text-gray-400">
-                      Registrar todas as ações do usuário para auditoria de
-                      segurança
+                    Log all user actions for security auditing
                     </p>
                   </div>
                   <Switch

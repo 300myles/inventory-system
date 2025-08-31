@@ -287,12 +287,15 @@ export function InventoryProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+<<<<<<< HEAD
   // admin authentication
   // useState(() => {
   //
   // }, [admin]);
 
   // Funções de conversão para Supabase
+=======
+>>>>>>> 5a84c28 (update)
   const convertInventoryItem = (item) => ({
     id: item.id,
     name: item.name,
@@ -438,10 +441,11 @@ export function InventoryProvider({ children }) {
     loadData();
   }, []);
 
-  // Funções CRUD - adaptadas para funcionar com ou sem Supabase
+  // Add new inventory item to the database
   const addInventoryItem = async (item) => {
     if (isSupabaseConfigured && supabase) {
       try {
+<<<<<<< HEAD
         const { data, error } = await supabase
           .from("inventory_items")
           .insert({
@@ -468,6 +472,9 @@ export function InventoryProvider({ children }) {
           .single();
 
         if (error) throw error;
+=======
+       const response = await fetch("", )
+>>>>>>> 5a84c28 (update)
 
         const newItem = convertInventoryItem(data);
         setInventory((prev) => [...prev, newItem]);

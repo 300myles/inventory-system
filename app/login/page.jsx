@@ -25,24 +25,46 @@ export default function LoginPage() {
   const login = async () => {
     setIsSubmitting(true);
     setErrorMsg("");
-
+  
     try {
       if (!form.email || !form.password) {
         throw new Error("Enter valid Email and password");
       }
-
-      setAdmin(form);
+  
+      // Call backend API
+      const res = await fetch(`${process.env.SERVER_URL}/api/admin/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+        mode: "cors",
+        credentials: "include", // 🔑 ensures cookie (admin_token) is stored
+      });
+  
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || "Login failed");
+      }
+  
+      // Save admin details (without password) to state/localStorage
+      setAdmin(data.admin);
+  
+      // Redirect to dashboard
       router.replace("/");
     } catch (error) {
       setErrorMsg(error.message);
-      console.log(error);
+      console.error(error);
     } finally {
       setIsSubmitting(false);
     }
   };
+  
 
   useEffect(() => {
-    if (admin) router.replace("/");
+    if (admin !== null) router.replace("/");
+    console.log("login", admin);
+    
   }, []);
 
   return (
