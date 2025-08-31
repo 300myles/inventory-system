@@ -69,7 +69,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex font-sans">
       <div
         className="hidden lg:flex lg:w-1/2 relative overflow-hidden"
-        style={{ backgroundColor: "#3F3FF3" }}
+        style={{ backgroundImage: `url("/images/login.avif")` }}
       >
         <div className="relative z-10 flex flex-col justify-between w-full px-12 py-12">
           <div className="flex items-center">
@@ -79,12 +79,12 @@ export default function LoginPage() {
                 style={{ backgroundColor: "#3F3FF3" }}
               ></div>
             </div>
-            <h1 className="text-xl font-semibold text-white">Frello</h1>
+            <h1 className="text-xl font-semibold text-white">TC</h1>
           </div>
 
           <div className="flex-1 flex flex-col justify-center">
             <h2 className="text-4xl text-white mb-6 leading-tight">
-              Effortlessly manage your team and operations.
+              Effortlessly manage your Inventory and operations.
             </h2>
             <p className="text-white/90 text-lg leading-relaxed">
               Log in to access your Inventory dashboard and manage your team.
@@ -92,7 +92,7 @@ export default function LoginPage() {
           </div>
 
           <div className="flex justify-between items-center text-white/70 text-sm">
-            <span>Copyright © 2025 Frello Enterprises LTD.</span>
+            <span>Copyright © 2025 TC Enterprises LTD.</span>
             <span className="cursor-pointer hover:text-white/90">
               Privacy Policy
             </span>
@@ -129,7 +129,7 @@ export default function LoginPage() {
               </h2>
               <p className="text-black">
                 {currentView === "login" &&
-                  "Enter your email and password to access your account."}
+                  "Enter your Admin Token and password to access your account."}
                 {currentView === "forgot" &&
                   "Enter your email address and we'll send you a reset link."}
               </p>
