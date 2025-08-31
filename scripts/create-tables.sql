@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS purchase_orders (
     expected_delivery DATE NOT NULL,
     actual_delivery DATE,
     notes TEXT,
-    priority VARCHAR(20) NOT NULL CHECK (priority IN ('baixa', 'media', 'alta', 'urgente')),
+    priority VARCHAR(20) NOT NULL CHECK (priority IN ('baixa', 'media', 'HighPriority', 'urgente')),
     created_by VARCHAR(255) NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
@@ -83,7 +83,7 @@ CREATE TABLE IF NOT EXISTS notifications (
     message TEXT NOT NULL,
     date TIMESTAMP WITH TIME ZONE NOT NULL,
     read BOOLEAN DEFAULT false,
-    priority VARCHAR(20) NOT NULL CHECK (priority IN ('baixa', 'media', 'alta')),
+    priority VARCHAR(20) NOT NULL CHECK (priority IN ('baixa', 'media', 'HighPriority')),
     action_required BOOLEAN DEFAULT false,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
@@ -145,7 +145,7 @@ CREATE POLICY "Enable all operations for authenticated users" ON notifications F
 
 -- Inserir dados de exemplo (opcional)
 INSERT INTO suppliers (name, contact, email, phone, address, rating, payment_terms, delivery_time) VALUES
-('Importadora Highland Coffee', 'Sarah Mitchell', 'sarah@highlandcoffee.com', '(11) 3123-4567', 'Rua dos Grãos de Café, 2847, São Paulo, SP 01234-567', 4.9, '30 dias', 14),
+('Johnson', 'Sarah Mitchell', 'sarah@highlandcoffee.com', '(11) 3123-4567', 'Rua dos Grãos de Café, 2847, São Paulo, SP 01234-567', 4.9, '30 dias', 14),
 ('South American Coffee Co.', 'Carlos Rodriguez', 'carlos@sacoffee.com', '(21) 2234-5678', 'Av. Importação, 1523, Rio de Janeiro, RJ 20001-234', 4.7, '15 dias', 10),
 ('EcoPackaging Solutions', 'Jennifer Green', 'jennifer@ecopack.com', '(11) 3345-6789', 'Rua Sustentável, 789, São Paulo, SP 04567-890', 4.6, '30 dias', 7),
 ('Laticínios Vale Verde', 'Michael Thompson', 'mike@valeverde.com', '(19) 3456-7890', 'Estrada da Fazenda, 456, Campinas, SP 13000-123', 4.8, '7 dias', 2)
@@ -156,7 +156,7 @@ INSERT INTO inventory_items (
     supplier, last_restocked, expiry_date, productID, location, barcode, description, 
     image, reorder_point, lead_time, avg_daily_usage
 ) VALUES
-('Grãos Etíopes Yirgacheffe Premium', 'Grãos de Café', 45, 20, 150, 'kg', 52.75, 'Importadora Highland Coffee', '2024-01-20', '2024-07-20', 'ETH-YIR-001', 'Depósito A - Prateleira 1', '1234567890123', 'Café etíope de origem única com notas florais', '/images/coffee-beans-ethiopian.jpg', 25, 14, 2.5),
+(' Smart Watch', 'Grãos de Café', 45, 20, 150, 'kg', 52.75, 'Johnson', '2024-01-20', '2024-07-20', 'ETH-YIR-001', 'Depósito A - Prateleira 1', '1234567890123', 'Café etíope de origem única com notas florais', '/images/coffee-beans-ethiopian.jpg', 25, 14, 2.5),
 ('Café Colombiano Supremo Torra Escura', 'Grãos de Café', 12, 25, 100, 'kg', 44.25, 'South American Coffee Co.', '2024-01-15', '2024-06-15', 'COL-SUP-002', 'Depósito A - Prateleira 2', '1234567890124', 'Café colombiano encorpado com notas de chocolate', '/images/coffee-beans-colombian.jpg', 30, 10, 3.2),
 ('Copos de Papel Premium 350ml', 'Suprimentos', 850, 500, 3000, 'unidades', 0.6, 'EcoPackaging Solutions', '2024-01-22', NULL, 'CUP-350ML-004', 'Depósito B - Seção 1', '1234567890126', 'Copos de papel biodegradáveis com marca Oliver Coffee', '/images/paper-cups.jpg', 600, 7, 45),
 ('Leite Integral Orgânico', 'Laticínios', 18, 25, 60, 'litros', 14.25, 'Laticínios Vale Verde', '2024-01-24', '2024-02-02', 'LEITE-INT-005', 'Geladeira - Prateleira A', '1234567890127', 'Leite integral orgânico fresco de laticínio local', '/images/organic-milk.jpg', 30, 2, 4.5)

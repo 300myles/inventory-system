@@ -1,12 +1,18 @@
-"use client"
+"use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Progress } from "@/components/ui/progress"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import {
   Package,
-  AlertTriangle,  
+  AlertTriangle,
   DollarSign,
   ShoppingCart,
   TrendingUp,
@@ -19,20 +25,35 @@ import {
   ArrowRight,
   ArrowUpRight,
   HistoryIcon,
-} from "lucide-react"
-import { useInventory } from "@/contexts/inventory-context"
-import { useTheme } from "@/contexts/theme-context"
+} from "lucide-react";
+import { useInventory } from "@/contexts/inventory-context";
+import { useTheme } from "@/contexts/theme-context";
 
 export default function Dashboard() {
-  const { inventory, suppliers, purchaseOrders, notifications, getLowStockItems, getExpiringItems } = useInventory()
-  const { theme } = useTheme()
+  const {
+    inventory,
+    suppliers,
+    purchaseOrders,
+    notifications,
+    getLowStockItems,
+    getExpiringItems,
+  } = useInventory();
+  const { theme } = useTheme();
 
-  const lowStockItems = getLowStockItems()
-  const expiringItems = getExpiringItems(30)
-  const totalValue = inventory.reduce((sum, item) => sum + item.currentStock * item.costPerUnit, 0)
-  const pendingOrders = purchaseOrders.filter((order) => order.status === "pendente").length
-  const totalItems = inventory.reduce((sum, item) => sum + item.currentStock, 0)
-  const unreadNotifications = notifications.filter((n) => !n.read).length
+  const lowStockItems = getLowStockItems();
+  const expiringItems = getExpiringItems(30);
+  const totalValue = inventory.reduce(
+    (sum, item) => sum + item.currentStock * item.costPerUnit,
+    0
+  );
+  const pendingOrders = purchaseOrders.filter(
+    (order) => order.status === "pendente"
+  ).length;
+  const totalItems = inventory.reduce(
+    (sum, item) => sum + item.currentStock,
+    0
+  );
+  const unreadNotifications = notifications.filter((n) => !n.read).length;
 
   // Stats for the day
   const todayStats = {
@@ -40,7 +61,7 @@ export default function Dashboard() {
     Orders: 12,
     Customers: 89,
     Growth: 15.2,
-  }
+  };
 
   // Low stocks
   const lowStocks = [
@@ -70,13 +91,13 @@ export default function Dashboard() {
   const recentActivity = [
     {
       acao: "Estoque Atualizado",
-      item: "Grãos Etíopes Yirgacheffe Premium",
+      item: " Smart Watch",
       tempo: "2 min",
       tipo: "success",
       valor: "+50 kg",
     },
     {
-      acao: "Alerta de Estoque Baixo",
+      acao: "Low  Stock Alert",
       item: "Café Colombiano Supremo",
       tempo: "15 min",
       tipo: "warning",
@@ -96,26 +117,29 @@ export default function Dashboard() {
       tipo: "info",
       valor: "Ativo",
     },
-  ]
+  ];
 
   // Resumo de categorias
   const categoryStats = inventory.reduce((acc, item) => {
     if (!acc[item.category]) {
-      acc[item.category] = { total: 0, value: 0, lowStock: 0 }
+      acc[item.category] = { total: 0, value: 0, lowStock: 0 };
     }
-    acc[item.category].total += item.currentStock
-    acc[item.category].value += item.currentStock * item.costPerUnit
+    acc[item.category].total += item.currentStock;
+    acc[item.category].value += item.currentStock * item.costPerUnit;
     if (item.currentStock <= item.minStock) {
-      acc[item.category].lowStock += 1
+      acc[item.category].lowStock += 1;
     }
-    return acc
-  }, {})
+    return acc;
+  }, {});
 
   // Classes dinâmicas baseadas no tema
-  const cardClass = theme === "dark" ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"
-  const textPrimary = theme === "dark" ? "text-gray-200" : "text-gray-800"
-  const textSecondary = theme === "dark" ? "text-gray-400" : "text-gray-600"
-  const textMuted = theme === "dark" ? "text-gray-500" : "text-gray-500"
+  const cardClass =
+    theme === "dark"
+      ? "bg-gray-900 border-gray-800"
+      : "bg-white border-gray-200";
+  const textPrimary = theme === "dark" ? "text-gray-200" : "text-gray-800";
+  const textSecondary = theme === "dark" ? "text-gray-400" : "text-gray-600";
+  const textMuted = theme === "dark" ? "text-gray-500" : "text-gray-500";
 
   return (
     <div className="space-y-6">
@@ -365,7 +389,6 @@ export default function Dashboard() {
           </CardContent>
         </Card>
       </div>
-
     </div>
   );
 }

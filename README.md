@@ -26,22 +26,22 @@ Sistema completo de gerenciamento de inventário para cafeterias, desenvolvido c
 
 ## 📋 Pré-requisitos
 
-- Node.js 18+ 
+- Node.js 18+
 - npm ou yarn
 - Conta no Supabase (opcional - sistema funciona com dados simulados)
 
 ## ⚡ Instalação Rápida
 
 1. **Clone e instale**
-\`\`\`bash
-git clone <repository-url>
-cd coffee-inventory-system
-npm install
-npm run dev
-\`\`\`
+   \`\`\`bash
+   git clone <repository-url>
+   cd coffee-inventory-system
+   npm install
+   npm run dev
+   \`\`\`
 
 2. **Acesse o sistema**
-Abra [http://localhost:3000](http://localhost:3000)
+   Abra [http://localhost:3000](http://localhost:3000)
 
 O sistema funcionará imediatamente com dados simulados! 🎉
 
@@ -50,17 +50,20 @@ O sistema funcionará imediatamente com dados simulados! 🎉
 Para usar dados reais persistentes:
 
 ### 1. Criar Projeto Supabase
+
 - Acesse [supabase.com](https://supabase.com)
 - Crie um novo projeto
 - Anote a URL e chave anônima
 
 ### 2. Configurar Banco
+
 Execute o script SQL no editor do Supabase:
 \`\`\`sql
 -- Ver arquivo scripts/create-tables.sql
 \`\`\`
 
 ### 3. Configurar Variáveis
+
 Crie `.env.local`:
 \`\`\`env
 NEXT_PUBLIC_SUPABASE_URL=https://seu-projeto.supabase.co
@@ -68,6 +71,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=sua-chave-anon-aqui
 \`\`\`
 
 ### 4. Reiniciar
+
 \`\`\`bash
 npm run dev
 \`\`\`
@@ -75,12 +79,14 @@ npm run dev
 ## 🎯 Modos de Operação
 
 ### 📱 Modo Simulado (Padrão)
+
 - ✅ Funciona imediatamente
 - ✅ Dados realistas pré-carregados
 - ✅ Todas as funcionalidades ativas
 - ⚠️ Dados não persistem entre sessões
 
 ### 🗄️ Modo Supabase
+
 - ✅ Dados persistentes
 - ✅ Sincronização em tempo real
 - ✅ Backup automático
@@ -89,12 +95,14 @@ npm run dev
 ## 📊 Funcionalidades Principais
 
 ### Dashboard
+
 - Métricas em tempo real
-- Alertas de produtos em falta
+- Alertas de produtos em fHighPriority
 - Itens próximos ao vencimento
 - Gráficos de performance
 
 ### Inventário
+
 - Adicionar/editar/remover produtos
 - Controle de estoque mínimo/máximo
 - Histórico de movimentações
@@ -102,12 +110,14 @@ npm run dev
 - Scanner de código de barras
 
 ### Fornecedores
+
 - Cadastro completo
 - Sistema de avaliações
 - Histórico de pedidos
 - Termos de pagamento
 
 ### Pedidos de Compra
+
 - Criação automática
 - Controle de status
 - Recebimento parcial/total
@@ -116,33 +126,35 @@ npm run dev
 ## 🔧 Scripts Disponíveis
 
 \`\`\`bash
-npm run dev      # Servidor de desenvolvimento
-npm run build    # Build para produção
-npm run start    # Servidor de produção
-npm run lint     # Verificar código
+npm run dev # Servidor de desenvolvimento
+npm run build # Build para produção
+npm run start # Servidor de produção
+npm run lint # Verificar código
 \`\`\`
 
 ## 📊 Estrutura do Projeto
 
 \`\`\`
 coffee-inventory-system/
-├── app/                 # Next.js App Router
-├── components/          # Componentes React
-├── contexts/           # Context providers
-├── lib/                # Configurações e utilitários
-├── public/             # Assets estáticos
-├── scripts/            # Scripts SQL
-└── types/              # Definições TypeScript
+├── app/ # Next.js App Router
+├── components/ # Componentes React
+├── contexts/ # Context providers
+├── lib/ # Configurações e utilitários
+├── public/ # Assets estáticos
+├── scripts/ # Scripts SQL
+└── types/ # Definições TypeScript
 \`\`\`
 
 ## 🚀 Deploy
 
 ### Vercel (Recomendado)
+
 1. Conecte seu repositório no Vercel
 2. Configure as variáveis de ambiente (se usar Supabase)
 3. Deploy automático
 
 ### Outras plataformas
+
 - Configure as variáveis de ambiente
 - Execute `npm run build`
 - Sirva os arquivos da pasta `.next`
@@ -150,6 +162,7 @@ coffee-inventory-system/
 ## 🎨 Personalização
 
 O sistema é totalmente personalizável:
+
 - Temas claro/escuro
 - Cores e estilos via Tailwind
 - Componentes modulares

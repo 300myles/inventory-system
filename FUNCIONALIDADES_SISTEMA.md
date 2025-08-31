@@ -236,7 +236,7 @@ unitCost: item.unitCost,
 }),
 totalAmount,
 status: "pending" as const,
-orderDate: new Date().toISOString().split("T")[0],
+createdAt: new Date().toISOString().split("T")[0],
 expectedDelivery: formData.get("expectedDelivery") as string,
 notes: (formData.get("notes") as string) || undefined,
 }
@@ -507,7 +507,7 @@ unitCost: number
 }>
 totalAmount: number
 status: "pending" | "approved" | "delivered" | "cancelled"
-orderDate: string
+createdAt: string
 expectedDelivery: string
 notes?: string
 }

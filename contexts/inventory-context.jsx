@@ -178,167 +178,65 @@ const initialInventory = [
   },
 ];
 
-const initialSuppliers = [
-  {
-    id: "1",
-    name: "Importadora Highland Coffee",
-    contact: "Sarah Mitchell",
-    email: "sarah@highlandcoffee.com",
-    phone: "(11) 3123-4567",
-    address: "Rua dos Appliance, 2847, São Paulo, SP 01234-567",
-    rating: 4.9,
-    totalOrders: 67,
-    lastOrderDate: "2024-01-20",
-    paymentTerms: "30 dias",
-    deliveryTime: 14,
-    isActive: true,
-  },
-  {
-    id: "2",
-    name: "South American Coffee Co.",
-    contact: "Carlos Rodriguez",
-    email: "carlos@sacoffee.com",
-    phone: "(21) 2234-5678",
-    address: "Av. Importação, 1523, Rio de Janeiro, RJ 20001-234",
-    rating: 4.7,
-    totalOrders: 45,
-    lastOrderDate: "2024-01-15",
-    paymentTerms: "15 dias",
-    deliveryTime: 10,
-    isActive: true,
-  },
-  {
-    id: "3",
-    name: "EcoPackaging Solutions",
-    contact: "Jennifer Green",
-    email: "jennifer@ecopack.com",
-    phone: "(11) 3345-6789",
-    address: "Rua Sustentável, 789, São Paulo, SP 04567-890",
-    rating: 4.6,
-    totalOrders: 89,
-    lastOrderDate: "2024-01-22",
-    paymentTerms: "30 dias",
-    deliveryTime: 7,
-    isActive: true,
-  },
-  {
-    id: "4",
-    name: "Laticínios Vale Verde",
-    contact: "Michael Thompson",
-    email: "mike@valeverde.com",
-    phone: "(19) 3456-7890",
-    address: "Estrada da Fazenda, 456, Campinas, SP 13000-123",
-    rating: 4.8,
-    totalOrders: 234,
-    lastOrderDate: "2024-01-24",
-    paymentTerms: "7 dias",
-    deliveryTime: 2,
-    isActive: true,
-  },
-  {
-    id: "5",
-    name: "Coffee Equipment Pro",
-    contact: "David Kim",
-    email: "david@coffeeequippro.com",
-    phone: "(11) 3567-8901",
-    address: "Rua dos Equipamentos, 321, São Paulo, SP 05678-901",
-    rating: 4.5,
-    totalOrders: 34,
-    lastOrderDate: "2024-01-21",
-    paymentTerms: "30 dias",
-    deliveryTime: 5,
-    isActive: true,
-  },
-  {
-    id: "6",
-    name: "Brazil Direct Coffee",
-    contact: "Ana Silva",
-    email: "ana@brazildirect.com",
-    phone: "(13) 3678-9012",
-    address: "Porto de Santos, 654, Santos, SP 11000-456",
-    rating: 4.4,
-    totalOrders: 28,
-    lastOrderDate: "2024-01-18",
-    paymentTerms: "45 dias",
-    deliveryTime: 12,
-    isActive: true,
-  },
-];
-
 const initialPurchaseOrders = [
   {
     id: "PED-2024-001",
-    supplier: "Importadora Highland Coffee",
+    supplier: "Johnson",
     items: [
       {
         itemId: "1",
-        itemName: "Grãos Etíopes Yirgacheffe Premium",
+        itemName: " Smart Watch",
         quantity: 100,
         unitCost: 52.75,
       },
     ],
     totalAmount: 5275.0,
-    status: "aprovado",
-    orderDate: "2024-01-25",
-    expectedDelivery: "2024-02-08",
-    notes: "Pedido prioritário para promoção de fim de semana",
-    priority: "alta",
+    createdAt: "2024-01-25",
     createdBy: "Usuário Admin",
   },
   {
     id: "PED-2024-002",
-    supplier: "Laticínios Vale Verde",
+    supplier: "Johnson",
     items: [
       {
-        itemId: "5",
-        itemName: "Leite Integral Orgânico",
-        quantity: 40,
-        unitCost: 14.25,
+        itemId: "1",
+        itemName: " Smart Watch",
+        quantity: 100,
+        unitCost: 52.75,
       },
     ],
-    totalAmount: 570.0,
-    status: "enviado",
-    orderDate: "2024-01-24",
-    expectedDelivery: "2024-01-26",
-    priority: "urgente",
+    totalAmount: 5275.0,
+    createdAt: "2024-01-25",
     createdBy: "Usuário Admin",
   },
   {
     id: "PED-2024-003",
-    supplier: "EcoPackaging Solutions",
+    supplier: "Johnson",
     items: [
       {
-        itemId: "4",
-        itemName: "Copos de Papel Premium 350ml",
-        quantity: 2000,
-        unitCost: 0.6,
+        itemId: "1",
+        itemName: " Smart Watch",
+        quantity: 100,
+        unitCost: 52.75,
       },
     ],
-    totalAmount: 1200.0,
-    status: "entregue",
-    orderDate: "2024-01-22",
-    expectedDelivery: "2024-01-29",
-    actualDelivery: "2024-01-28",
-    priority: "media",
+    totalAmount: 5275.0,
+    createdAt: "2024-01-25",
     createdBy: "Usuário Admin",
   },
   {
     id: "PED-2024-004",
-    supplier: "South American Coffee Co.",
+    supplier: "Johnson",
     items: [
       {
-        itemId: "2",
-        itemName: "Café Colombiano Supremo Torra Escura",
-        quantity: 75,
-        unitCost: 44.25,
+        itemId: "1",
+        itemName: " Smart Watch",
+        quantity: 100,
+        unitCost: 52.75,
       },
     ],
-    totalAmount: 3318.75,
-    status: "pendente",
-    orderDate: "2024-01-25",
-    expectedDelivery: "2024-02-04",
-    notes: "Reposição urgente necessária",
-    priority: "urgente",
+    totalAmount: 5275.0,
+    createdAt: "2024-01-25",
     createdBy: "Usuário Admin",
   },
 ];
@@ -347,43 +245,33 @@ const initialNotifications = [
   {
     id: "1",
     type: "estoque_baixo",
-    title: "Alerta de Estoque Baixo",
-    message:
-      "Café Colombiano Supremo Torra Escura está abaixo do nível mínimo (12/25)",
+    title: "Low  Stock Alert",
+    message: "Smart Watch out of Stock",
     date: "2024-01-25T10:30:00Z",
     read: false,
-    priority: "alta",
+    priority: "HighPriority",
     actionRequired: true,
   },
-  {
+
+    {
     id: "2",
-    type: "vencimento",
-    title: "Aviso de Vencimento",
-    message: "Leite Integral Orgânico vence em 8 dias (02 de fev, 2024)",
-    date: "2024-01-25T09:15:00Z",
+    type: "estoque_baixo",
+    title: "Low  Stock Alert",
+    message: "Smart Watch out of Stock",
+    date: "2024-01-25T10:30:00Z",
     read: false,
-    priority: "media",
+    priority: "HighPriority",
     actionRequired: true,
   },
-  {
+
+    {
     id: "3",
-    type: "status_pedido",
-    title: "Pedido Enviado",
-    message: "PED-2024-002 do Laticínios Vale Verde foi enviado",
-    date: "2024-01-25T08:45:00Z",
-    read: true,
-    priority: "baixa",
-    actionRequired: false,
-  },
-  {
-    id: "4",
     type: "estoque_baixo",
-    title: "Alerta de Estoque Baixo",
-    message:
-      "Café Brasileiro Santos Torra Média está criticamente baixo (8/20)",
-    date: "2024-01-25T07:20:00Z",
+    title: "Low  Stock Alert",
+    message: "Smart Watch out of Stock",
+    date: "2024-01-25T10:30:00Z",
     read: false,
-    priority: "alta",
+    priority: "HighPriority",
     actionRequired: true,
   },
 ];
@@ -436,7 +324,7 @@ export function InventoryProvider({ children }) {
     address: supplier.address,
     rating: supplier.rating,
     totalOrders: supplier.total_orders,
-    lastOrderDate: supplier.last_order_date,
+    lastcreatedAt: supplier.last_order_date,
     paymentTerms: supplier.payment_terms,
     deliveryTime: supplier.delivery_time,
     isActive: supplier.is_active,
@@ -448,7 +336,7 @@ export function InventoryProvider({ children }) {
     items: order.items,
     totalAmount: order.total_amount,
     status: order.status,
-    orderDate: order.order_date,
+    createdAt: order.order_date,
     expectedDelivery: order.expected_delivery,
     actualDelivery: order.actual_delivery,
     notes: order.notes,
@@ -488,7 +376,6 @@ export function InventoryProvider({ children }) {
       if (!isSupabaseConfigured || !supabase) {
         // Usar dados simulados
         setInventory(initialInventory);
-        setSuppliers(initialSuppliers);
         setPurchaseOrders(initialPurchaseOrders);
         setNotifications(initialNotifications);
         setStockMovements([]);
@@ -782,7 +669,7 @@ export function InventoryProvider({ children }) {
             address: supplier.address,
             rating: supplier.rating,
             total_orders: supplier.totalOrders,
-            last_order_date: supplier.lastOrderDate,
+            last_order_date: supplier.lastcreatedAt,
             payment_terms: supplier.paymentTerms,
             delivery_time: supplier.deliveryTime,
             is_active: supplier.isActive,
@@ -816,8 +703,8 @@ export function InventoryProvider({ children }) {
         if (updates.rating !== undefined) updateData.rating = updates.rating;
         if (updates.totalOrders !== undefined)
           updateData.total_orders = updates.totalOrders;
-        if (updates.lastOrderDate !== undefined)
-          updateData.last_order_date = updates.lastOrderDate;
+        if (updates.lastcreatedAt !== undefined)
+          updateData.last_order_date = updates.lastcreatedAt;
         if (updates.paymentTerms !== undefined)
           updateData.payment_terms = updates.paymentTerms;
         if (updates.deliveryTime !== undefined)
@@ -883,7 +770,7 @@ export function InventoryProvider({ children }) {
             items: order.items,
             total_amount: order.totalAmount,
             status: order.status,
-            order_date: order.orderDate,
+            order_date: order.createdAt,
             expected_delivery: order.expectedDelivery,
             actual_delivery: order.actualDelivery,
             notes: order.notes,
@@ -940,8 +827,8 @@ export function InventoryProvider({ children }) {
         if (updates.totalAmount !== undefined)
           updateData.total_amount = updates.totalAmount;
         if (updates.status !== undefined) updateData.status = updates.status;
-        if (updates.orderDate !== undefined)
-          updateData.order_date = updates.orderDate;
+        if (updates.createdAt !== undefined)
+          updateData.order_date = updates.createdAt;
         if (updates.expectedDelivery !== undefined)
           updateData.expected_delivery = updates.expectedDelivery;
         if (updates.actualDelivery !== undefined)
@@ -1138,12 +1025,14 @@ export function InventoryProvider({ children }) {
         if (!existingNotification) {
           await addNotification({
             type: "estoque_baixo",
-            title: "Alerta de Estoque Baixo",
+            title: "Low  Stock Alert",
             message: `${item.name} está abaixo do nível mínimo (${item.currentStock}/${item.minStock})`,
             date: new Date().toISOString(),
             read: false,
             priority:
-              item.currentStock <= item.minStock * 0.5 ? "alta" : "media",
+              item.currentStock <= item.minStock * 0.5
+                ? "HighPriority"
+                : "media",
             actionRequired: true,
           });
         }
@@ -1170,7 +1059,7 @@ export function InventoryProvider({ children }) {
             message: `${item.name} vence em ${daysUntilExpiry} dias (${item.uploadedDate})`,
             date: new Date().toISOString(),
             read: false,
-            priority: daysUntilExpiry <= 7 ? "alta" : "media",
+            priority: daysUntilExpiry <= 7 ? "HighPriority" : "media",
             actionRequired: true,
           });
         }

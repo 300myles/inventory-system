@@ -207,7 +207,7 @@ export default function InventoryManager() {
 
   return (
     <div className="space-y-6">
-      {/* Cabeçalho */}
+      {/* Overview */}
       <div className="flex justify-between items-center">
         <div>
           <h2
@@ -217,7 +217,13 @@ export default function InventoryManager() {
           >
             Inventory
           </h2>
-          <p className="{textSecondary}">Comprehensive Inventory Overview</p>
+          <p
+            className={`text-sm font-medium ${
+              theme === "dark" ? "text-gray-400" : "text-gray-600"
+            }`}
+          >
+            Comprehensive Inventory Overview
+          </p>
         </div>
         <div className="flex gap-2">
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
@@ -341,11 +347,11 @@ export default function InventoryManager() {
         </div>
       </div>
 
-      {/* Filtros */}
+      {/* Filters Section */}
       <Card
         className={` ${
           theme === "dark"
-            ? "bg-gray-800 border-gray-800"
+            ? "bg-gray-900 border-gray-800"
             : "bg-transparent border-gray-200"
         }`}
       >
@@ -412,7 +418,7 @@ export default function InventoryManager() {
                 }`}
               >
                 <SelectItem value="all">Stock Status</SelectItem>
-                 <SelectItem value="in_stock">In Stock</SelectItem>
+                <SelectItem value="in_stock">In Stock</SelectItem>
                 <SelectItem value="out_of_stock">Out of Stock</SelectItem>
               </SelectContent>
             </Select>
@@ -526,7 +532,7 @@ export default function InventoryManager() {
                             variant="outline"
                             size="sm"
                             onClick={() => openViewDialog(item)}
-                            className="border-gray-700 hover:bg-gray-800 text-gray-200"
+                            className="border-gray-700 cursor-pointer hover:bg-gray-800 text-gray-200"
                           >
                             <Eye className="h-4 w-4" />
                           </Button>
@@ -534,7 +540,7 @@ export default function InventoryManager() {
                             variant="outline"
                             size="sm"
                             onClick={() => openEditDialog(item)}
-                            className="border-gray-700 hover:bg-gray-800 text-gray-200"
+                            className="border-gray-700 cursor-pointer hover:bg-gray-800 text-gray-200"
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
@@ -542,7 +548,7 @@ export default function InventoryManager() {
                             variant="outline"
                             size="sm"
                             onClick={() => deleteInventoryItem(item.id)}
-                            className="border-red-700 hover:bg-red-900 text-red-300"
+                            className="border-red-700 cursor-pointer hover:bg-red-900 text-red-300"
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>

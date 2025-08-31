@@ -63,7 +63,7 @@ function CoffeeLogoIcon() {
 }
 
 export default function SystemSettings() {
-  const { theme } = useTheme()
+  const { theme } = useTheme();
   const [settings, setSettings] = useState({
     // Configurações Gerais
     nomeEmpresa: "TC Inventory",
@@ -71,7 +71,7 @@ export default function SystemSettings() {
     coin: "BRL",
     language: "pt-BR",
 
-    // Configurações de Notificação
+    // Notification Settings
     alertasEstoqueBaixo: true,
     alertasVencimento: true,
     alertasStatusPedido: true,
@@ -123,7 +123,7 @@ export default function SystemSettings() {
     } catch (error) {
       setError("Error starting WhatsAppbot: " + error.message);
     }
-  }
+  };
 
   const stopWhatsappbot = async () => {
     // Logic to stop Whatsapp Bot
@@ -140,9 +140,8 @@ export default function SystemSettings() {
       setWhatsappbotConfig((prev) => ({ ...prev, running: false }));
     } catch (error) {
       setError("Error stopping WhatsAppbot: " + error.message);
-      
     }
-  }
+  };
 
   const handleSettingChange = (key, value) => {
     setSettings((prev) => ({ ...prev, [key]: value }));
@@ -465,7 +464,7 @@ export default function SystemSettings() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-gray-200">
                 <Bell className="h-5 w-5 text-blue-400" />
-                Configurações de Notificação
+                Notification Settings
               </CardTitle>
               <CardDescription className="text-gray-400">
                 Configure alertas e preferências de notificação
@@ -616,7 +615,9 @@ export default function SystemSettings() {
                     <SelectContent className="bg-gray-800 border-gray-700">
                       {whatsappbotConfig.options.map((option, id) => (
                         <SelectItem value={option} key={id}>
-                          {option === "group-chat" ? "Group Chat" : "Direct Messages"}
+                          {option === "group-chat"
+                            ? "Group Chat"
+                            : "Direct Messages"}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -626,49 +627,53 @@ export default function SystemSettings() {
                   </p> */}
                 </div>
 
-                {(whatsappbotConfig.listener === "group-chat") && (
-                    <div className="space-y-2">
-                      <Label htmlFor="groupLink" className="text-gray-200">
-                        WhatsApp Group Link
-                      </Label>
-                      <Input
-                        id="groupLink"
-                        value={whatsappbotConfig?.groupLink}
-                        placeholder={"https://chat.whatsapp.com/your-group-link"}
-                        onChange={(e) =>
-                          setWhatsappbotConfig((prev) => ({
-                            ...prev,
-                            groupLink: e.target.value,
-                          }))
-                        }
-                        className="bg-gray-800 placeholder-gray-400 border-gray-700 text-gray-200"
-                      />
-                      <p className="text-sm text-gray-400">
-                        Link to the WhatsApp group where the bot will operate
-                      </p>
-                    </div>
-                  )}
+                {whatsappbotConfig.listener === "group-chat" && (
+                  <div className="space-y-2">
+                    <Label htmlFor="groupLink" className="text-gray-200">
+                      WhatsApp Group Link
+                    </Label>
+                    <Input
+                      id="groupLink"
+                      value={whatsappbotConfig?.groupLink}
+                      placeholder={"https://chat.whatsapp.com/your-group-link"}
+                      onChange={(e) =>
+                        setWhatsappbotConfig((prev) => ({
+                          ...prev,
+                          groupLink: e.target.value,
+                        }))
+                      }
+                      className="bg-gray-800 placeholder-gray-400 border-gray-700 text-gray-200"
+                    />
+                    <p className="text-sm text-gray-400">
+                      Link to the WhatsApp group where the bot will operate
+                    </p>
+                  </div>
+                )}
               </div>
 
               <div className="flex gap-4">
                 {whatsappbotConfig?.running ? (
                   <Badge
-                  variant="outline"
-                  className="bg-green-900 text-green-300 border-green-700"
-                >
-                  WhatsApp Bot is Running
-                </Badge>
+                    variant="outline"
+                    className="bg-green-900 text-green-300 border-green-700"
+                  >
+                    WhatsApp Bot is Running
+                  </Badge>
                 ) : (
                   <Badge
-                  variant="outline"
-                  className="bg-red-900 text-red-300 border-red-700"
-                >
-                  WhatsApp Bot is Stopped
-                </Badge>
+                    variant="outline"
+                    className="bg-red-900 text-red-300 border-red-700"
+                  >
+                    WhatsApp Bot is Stopped
+                  </Badge>
                 )}
                 <Button
                   variant="outline"
-                  onClick={whatsappbotConfig?.running ? stopWhatsappbot : startWhatsappbot}
+                  onClick={
+                    whatsappbotConfig?.running
+                      ? stopWhatsappbot
+                      : startWhatsappbot
+                  }
                   className="border-gray-700 hover:bg-gray-800 text-gray-200"
                 >
                   <RefreshCw className="h-4 w-4 mr-2" />
