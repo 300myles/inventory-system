@@ -32,7 +32,7 @@ export default function LoginPage() {
       }
   
       // Call backend API
-      const res = await fetch(`${process.env.SERVER_URL}/api/admin/login`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/admin/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -61,9 +61,10 @@ export default function LoginPage() {
   };
 
   useEffect(() => {
-    if (!loading && admin !== null) router.replace("/");
-    console.log("login", admin);
-  }, []);
+    if (!loading && admin) {
+      router.replace("/");
+    }
+  }, [loading, admin]);
 
   return (
     <div className="min-h-screen flex font-sans">

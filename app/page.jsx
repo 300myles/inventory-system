@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useInventory } from "@/contexts/inventory-context";
 import { useEffect } from "react";
+import { useSocket } from "@/contexts/SocketContext";
 
 // ElaboratedCoffeeLogo Component
 function ElaboratedCoffeeLogo({ size = "large" }) {
@@ -92,8 +93,15 @@ function ElaboratedCoffeeLogo({ size = "large" }) {
 
 export default function OliverCoffeeInventorySystemContent() {
   const { theme } = useTheme();
+  const { register } = useSocket();
   const router = useRouter();
   const { admin, loading } = useInventory();
+
+  useEffect(() => {
+    if (admin && admin.email) {
+      register({ email: admin.email, role: admin?.role });
+    }
+  }, [admin]);
 
   const exportData = () => {
     // Funcionalidade de exportação de dados
@@ -115,11 +123,15 @@ export default function OliverCoffeeInventorySystemContent() {
     a.click();
   };
 
-  useEffect(() => {
-    if (!loading && admin === null) router.replace("/login");
-  }, [admin]);
+  
 
-  if (loading && admin === null) return;
+  useEffect(() => {
+    if (!loading && !admin) {
+      router.replace("/login");
+    }
+  }, [loading, admin]);
+
+  if (loading || admin === null) return;
 
   return (
     <div
@@ -172,7 +184,7 @@ export default function OliverCoffeeInventorySystemContent() {
                     theme === "dark" ? "text-gray-200" : "text-gray-800"
                   }`}
                 >
-                  User Admin
+                  {admin?.email}
                 </p>
                 <p
                   className={`text-xs ${

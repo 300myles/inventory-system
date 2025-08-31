@@ -3,7 +3,8 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
-import { getAdmin } from "@/lib/userActions";
+import { getAdmin, getAllInventorys } from "@/lib/userActions";
+import { SocketProvider } from "./SocketContext";
 
 const InventoryContext = createContext(null);
 
@@ -254,7 +255,7 @@ const initialNotifications = [
     actionRequired: true,
   },
 
-    {
+  {
     id: "2",
     type: "estoque_baixo",
     title: "Low  Stock Alert",
@@ -265,7 +266,7 @@ const initialNotifications = [
     actionRequired: true,
   },
 
-    {
+  {
     id: "3",
     type: "estoque_baixo",
     title: "Low  Stock Alert",
@@ -292,6 +293,18 @@ export function InventoryProvider({ children }) {
   useEffect(() => {
     verifyAdmin();
   }, []);
+
+  // Fetch all inventory data
+  const getInventory = async (page) => {
+    try {
+      const data = await getAllInventorys({page});
+      if (data?.success) {
+        setInventory([...inventory, data.data]);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   // Funções de conversão para Supabase
   const convertInventoryItem = (item) => ({
@@ -376,7 +389,7 @@ export function InventoryProvider({ children }) {
 
       if (!isSupabaseConfigured || !supabase) {
         // Usar dados simulados
-        setInventory(initialInventory);
+        // setInventory(initialInventory);
         setPurchaseOrders(initialPurchaseOrders);
         setNotifications(initialNotifications);
         setStockMovements([]);
@@ -439,6 +452,12 @@ export function InventoryProvider({ children }) {
     loadData();
   }, []);
 
+  useEffect(() => {
+    if (admin) {
+      getInventory();
+    }
+  }, [admin]);
+
   // Add new inventory item to the database
   const addInventoryItem = async (item) => {
     if (isSupabaseConfigured && supabase) {
@@ -469,7 +488,7 @@ export function InventoryProvider({ children }) {
           .single();
 
         if (error) throw error;
-       const response = await fetch("", )
+        const response = await fetch("");
 
         const newItem = convertInventoryItem(data);
         setInventory((prev) => [...prev, newItem]);
@@ -1079,11 +1098,11 @@ export function InventoryProvider({ children }) {
         setAdmin(data.admin);
       }
     } catch (error) {
-      console.error(error)
+      console.error(error);
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   return (
     <InventoryContext.Provider
@@ -1117,7 +1136,7 @@ export function InventoryProvider({ children }) {
         refreshData,
       }}
     >
-      {children}
+      <SocketProvider>{children}</SocketProvider>
     </InventoryContext.Provider>
   );
 }

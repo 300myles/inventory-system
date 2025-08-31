@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Card,
   CardContent,
@@ -35,6 +35,9 @@ import {
   CheckCircle,
 } from "lucide-react";
 import { useTheme } from "@/contexts/theme-context";
+import Image from "next/image";
+import { useSocket } from "@/contexts/SocketContext";
+import { get } from "react-hook-form";
 
 // Componente de Logo Elaborado para Configurações
 function CoffeeLogoIcon() {
@@ -64,6 +67,7 @@ function CoffeeLogoIcon() {
 
 export default function SystemSettings() {
   const { theme } = useTheme();
+  const { socket } = useSocket();
   const [settings, setSettings] = useState({
     // Configurações Gerais
     nomeEmpresa: "TC Inventory",
@@ -97,7 +101,13 @@ export default function SystemSettings() {
     groupLink: "", // link to the WhatsApp group
     options: ["group-chat", "direct-messages"],
     running: false,
+    deleteSession: false
   });
+  const [botConnected, setBotConnected] = useState(false);
+  const [loadingQr, setLoadingQr] = useState(false);
+  const [qrCode, setQrCode] = useState(null);
+  const [countdown, setCountdown] = useState(15);
+  const [attempts, setAttempts] = useState(0);
 
   const [statuswhatsappbot, setStatuswhatsappbot] = useState({
     bancoDados: "online",
@@ -108,38 +118,446 @@ export default function SystemSettings() {
     tempoAtivo: "15 days, 8 hours",
   });
 
-  const startWhatsappbot = async () => {
-    // Logic to start WhatsAppbot
-    try {
-      // const response = await fetch('/api/start-whatsappbot', {});
-      // const data = await response.json();
-      // if (data.success) {
-      //   setWhatsappbotConfig((prev) => ({ ...prev, running: true }));
-      // } else {
-      //   throw new Error(data.error || "Failed to start WhatsAppbot");
-      // }
+  const intervalRef = useRef(null);
 
-      setWhatsappbotConfig((prev) => ({ ...prev, running: true }));
-    } catch (error) {
-      setError("Error starting WhatsAppbot: " + error.message);
+  // ---------------- FETCH HELPERS ----------------
+  const api = async (url, options = {}) => {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}${url}`,
+      {
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        mode: "cors",
+        ...options,
+      }
+    );
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || "Request failed");
+    }
+    return response.json();
+  };
+
+  const getConfig = async () => {
+    try {
+      const data = await api("/api/whatsappbot/bot/config");
+      if (data.success) {
+        setBotConnected(data.connected);
+        setWhatsappbotConfig((prev) => ({
+          ...prev,
+          running: data.botEnabled,
+          listener:
+            data.type === "unofficial" ? "group-chat" : "direct-messages",
+          groupLink: data.groupLink || "",
+        }));
+
+        if (data.connected) {
+          stopCountdown();
+          setQrCode(null);
+          setAttempts(0);
+          setCountdown(15);
+        }
+      }
+    } catch (err) {
+      console.error("Error fetching config:", err);
     }
   };
 
-  const stopWhatsappbot = async () => {
-    // Logic to stop Whatsapp Bot
-
+  const getQr = async () => {
     try {
-      // const response = await fetch('/api/stop-whatsappbot', {});
-      // const data = await response.json();
-      // if (data.success) {
-      //   setWhatsappbotConfig((prev) => ({ ...prev, running: false }));
-      // } else {
-      //   throw new Error(data.error || "Failed to stop WhatsAppbot");
-      // }
+      const data = await api("/api/whatsappbot/bot/qr");
+      setQrCode(data);
+    } catch (err) {
+      console.error("Error fetching QR:", err);
+      setAttempts((a) => a + 1);
+    }
+  };
 
-      setWhatsappbotConfig((prev) => ({ ...prev, running: false }));
+  const startBot = async () => {
+    setError(null);
+    try {
+      if (!whatsappbotConfig.groupLink)
+        throw new Error("Enter valid Whatsapp group link");
+
+      const body = {
+        enabled: true,
+        type:
+          whatsappbotConfig.listener === "group-chat"
+            ? "unofficial"
+            : "official",
+        groupLink: whatsappbotConfig.groupLink,
+      };
+
+      const data = await api("/api/whatsappbot/bot/start", {
+        method: "POST",
+        body: JSON.stringify(body),
+      });
+
+      if (data.success) {
+        setWhatsappbotConfig((prev) => ({ ...prev, running: true }));
+        setLoadingQr(true);
+        if (!botConnected) getQr();
+      }
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const stopBot = async () => {
+    setError(null);
+    try {
+      const body = {
+        enabled: false,
+        type:
+          whatsappbotConfig.listener === "group-chat"
+            ? "unofficial"
+            : "official",
+        deleteSession: whatsappbotConfig.deleteSession
+      };
+
+      const data = await api("/api/whatsappbot/bot/stop", {
+        method: "POST",
+        body: JSON.stringify(body),
+      });
+
+      if (data.success) {
+        setWhatsappbotConfig((prev) => ({ ...prev, running: false }));
+        setBotConnected(false);
+        stopCountdown();
+        setQrCode(null);
+        setAttempts(0);
+        setCountdown(15);
+      }
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  // ---------------- COUNTDOWN HANDLER ----------------
+  const startCountdown = () => {
+    stopCountdown(); // clear any existing
+    intervalRef.current = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev === 1) {
+          getQr();
+          setAttempts((a) => a + 1);
+          return 15; // reset
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  const stopCountdown = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  };
+
+  // ---------------- SOCKET EVENTS ----------------
+  useEffect(() => {
+    if (!socket) return;
+    socket.on("whatsapp:qr", (data) => {
+      setQrCode({ qr: data.qrImage });
+      setLoadingQr(true);
+    });
+    socket.on("whatsapp:connected", async () => {
+      await getConfig();
+      setWhatsappbotConfig((prev) => ({ ...prev, running: true }));
+      setBotConnected(true);
+    });
+    return () => {
+      socket.off("whatsapp:qr");
+      socket.off("whatsapp:connected");
+    };
+  }, [socket]);
+
+  // ---------------- EFFECTS ----------------
+  // Start/stop countdown when bot is running but not connected
+  useEffect(() => {
+    if (whatsappbotConfig.running && !botConnected) {
+      startCountdown();
+    } else {
+      stopCountdown();
+    }
+    return () => stopCountdown();
+  }, [whatsappbotConfig.running, botConnected]);
+
+  // Auto stop after 5 attempts
+  useEffect(() => {
+    if (attempts >= 5 && !botConnected) {
+      stopBot();
+    }
+  }, [attempts]);
+
+  // Initial fetch of config
+  useEffect(() => {
+    getConfig();
+  }, []);
+
+  // const startWhatsappbot = async () => {
+  //   setError("");
+  //   // Logic to start WhatsAppbot
+  //   try {
+  //     if (!whatsappbotConfig.groupLink) {
+  //       throw new Error("Enter valid Whatsapp group link");
+  //     }
+
+  //     console.log("config", {
+  //       enabled: true,
+  //       type:
+  //         whatsappbotConfig.listener === "group-chat"
+  //           ? "unofficial"
+  //           : "official",
+  //       groupLink: whatsappbotConfig.groupLink,
+  //     });
+
+  //     const response = await fetch(
+  //       `${process.env.NEXT_PUBLIC_SERVER_URL}/api/whatsappbot/bot/start`,
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         mode: "cors",
+  //         credentials: "include",
+  //         body: JSON.stringify({
+  //           enabled: true,
+  //           type:
+  //             whatsappbotConfig.listener === "group-chat"
+  //               ? "unofficial"
+  //               : "official",
+  //           groupLink: whatsappbotConfig.groupLink,
+  //         }),
+  //       }
+  //     );
+
+  //     if (!response.ok) {
+  //       const errorData = await response.json();
+  //       throw new Error(errorData.error || "Failed to start WhatsAppbot");
+  //     }
+
+  //     const data = await response.json();
+  //     if (data.success) {
+  //       setWhatsappbotConfig((prev) => ({ ...prev, running: true }));
+  //       setLoadingQr(true);
+  //       if (!botConnected) setTimeout(getWhatsAppBotQrImage, 500);
+  //     } else {
+  //       throw new Error(data.error || "Failed to start WhatsAppbot");
+  //     }
+
+  //     // setWhatsappbotConfig((prev) => ({ ...prev, running: true }));
+  //   } catch (error) {
+  //     setError("Error starting WhatsAppbot: " + error.message);
+  //   }
+  // };
+
+  // let timer = null;
+
+  // const getWhatsAppBotConfig = async () => {
+  //   try {
+  //     const response = await fetch(
+  //       `${process.env.NEXT_PUBLIC_SERVER_URL}/api/whatsappbot/bot/config`,
+  //       {
+  //         method: "GET",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         mode: "cors",
+  //         credentials: "include",
+  //       }
+  //     );
+  //     if (!response.ok) {
+  //       const errorData = await response.json();
+  //       throw new Error(errorData.error || "Failed to get WhatsAppbot config");
+  //     }
+  //     const data = await response.json();
+  //     if (data.success) {
+  //       setBotConnected(data.connected);
+  //       console.log("WhatsApp Bot Config:", data);
+        
+  //       setWhatsappbotConfig((prev) => ({
+  //         ...prev,
+  //         running: data.botEnabled,
+  //         listener:
+  //           data.type === "unofficial" ? "group-chat" : "direct-messages",
+  //         groupLink: data?.groupLink,
+  //       }));
+
+  //       if (data.connected) {
+  //         clearInterval(timer);
+  //         setLoadingQr(false);
+  //         setAttempts(0);
+  //         setCountdown(15);
+  //         setQrCode(null);
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching WhatsAppbot config:", error);
+  //     throw error;
+  //   }
+  // };
+
+  // const stopWhatsappbot = async () => {
+  //   setError("");
+  //   // Logic to stop Whatsapp Bot
+
+  //   try {
+  //     const response = await fetch(
+  //       `${process.env.NEXT_PUBLIC_SERVER_URL}/api/whatsappbot/bot/stop`,
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         mode: "cors",
+  //         credentials: "include",
+  //         body: JSON.stringify({
+  //           enabled: false,
+  //           type:
+  //             whatsappbotConfig.listener === "group-chat"
+  //               ? "unofficial"
+  //               : "official",
+  //         }),
+  //       }
+  //     );
+
+  //     if (!response.ok) {
+  //       const errorData = await response.json();
+  //       throw new Error(errorData.error || "Failed to stop WhatsAppbot");
+  //     }
+
+  //     const data = await response.json();
+  //     if (data.success) {
+  //       setWhatsappbotConfig((prev) => ({ ...prev, running: false }));
+  //       getWhatsAppBotConfig();
+  //       setLoadingQr(false);
+  //       clearInterval(timer);
+  //       setAttempts(0);
+  //       setCountdown(15);
+  //       setQrCode(null);
+  //     } else {
+  //       throw new Error(data.error || "Failed to stop WhatsAppbot");
+  //     }
+
+  //     // setWhatsappbotConfig((prev) => ({ ...prev, running: false }));
+  //   } catch (error) {
+  //     setError("Error stopping WhatsAppbot: " + error.message);
+  //   }
+  // };
+
+  // const getWhatsAppBotQrImage = async () => {
+  //   try {
+  //     const response = await fetch(
+  //       `${process.env.NEXT_PUBLIC_SERVER_URL}/api/whatsappbot/bot/qr`,
+  //       {
+  //         method: "GET",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         mode: "cors",
+  //         credentials: "include",
+  //       }
+  //     );
+  //     if (!response.ok) {
+  //       const errorData = await response.json();
+  //       throw new Error(errorData.error || "Failed to get WhatsApp Qr Code");
+  //     }
+  //     const data = await response.json();
+  //     setQrCode(data);
+  //   } catch (error) {
+  //     console.error("Error creating admin:", error);
+  //     throw error;
+  //   }
+  // };
+
+  // // Countdown + refetch effect
+  // useEffect(() => {
+  //   if (!whatsappbotConfig.running || botConnected) return; // only run if bot is running
+
+  //   timer = setInterval(() => {
+  //     setCountdown((prev) => {
+  //       if (prev === 1) {
+  //         // Refetch QR
+  //         getWhatsAppBotQrImage()
+  //           .then(() => {
+  //             setAttempts((a) => a + 1);
+  //           })
+  //           .catch(() => {
+  //             setAttempts((a) => a + 1);
+  //           });
+
+  //         return 15; // reset countdown
+  //       }
+  //       return prev - 1;
+  //     });
+  //   }, 1000);
+
+  //   if (botConnected) clearInterval(timer);
+
+  //   return () => clearInterval(timer);
+  // }, [whatsappbotConfig.running, botConnected]);
+
+  // // Auto stop after 5 attempts
+  // useEffect(() => {
+  //   if (attempts >= 5) {
+  //     if (botConnected) return;
+  //     stopWhatsappbot();
+  //   }
+  // }, [attempts]);
+
+  // useEffect(() => {
+  //   if (socket) {
+  //     socket.on("whatsapp:qr", (data) => {
+  //       console.log("📲 QR Code:", data.qrImage);
+  //       setQrCode({ qr: data.qrImage });
+  //     });
+
+  //     socket.on("whatsapp:connected", async (data) => {
+  //       console.log("✅ Bot connected:", data.message);
+  //       await getWhatsAppBotConfig();
+  //       setWhatsappbotConfig((prev) => ({ ...prev, running: true }));
+  //     });
+
+  //     return () => {
+  //       socket.off("whatsapp:qr");
+  //       socket.off("whatsapp:connected");
+  //     };
+  //   }
+  // }, [socket]);
+
+  const getWhatsappbotStatus = async () => {
+    // Logic to get Whatsapp Bot status
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/whatsappbot/bot/config`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          mode: "cors",
+          credentials: "include",
+        }
+      );
+      const data = await response.json();
+      if (data.success) {
+        setWhatsappbotConfig((prev) => ({
+          ...prev,
+          running: data.botEnabled,
+          listener:
+            data.type === "unofficial" ? "group-chat" : "direct-messages",
+          groupLink: data?.groupLink,
+        }));
+        // setStatuswhatsappbot(data);
+      } else {
+        throw new Error(data.error || "Failed to fetch WhatsAppbot status");
+      }
     } catch (error) {
-      setError("Error stopping WhatsAppbot: " + error.message);
+      setError("Error fetching WhatsAppbot status: " + error.message);
+    } finally {
+      setLoadingQr(false);
     }
   };
 
@@ -380,73 +798,6 @@ export default function SystemSettings() {
                 </div>
               </div>
             </CardContent>
-
-            {/* <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-gray-200">
-                <Settings className="h-5 w-5 text-purple-400" />
-                Configuração do whatsappbot
-              </CardTitle>
-              <CardDescription className="text-gray-400">
-                Configurações avançadas do whatsappbot e manutenção
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label className="text-gray-200">Modo de Manutenção</Label>
-                    <p className="text-sm text-gray-400">
-                      Ativar modo de manutenção para atualizações do whatsappbot
-                    </p>
-                  </div>
-                  <Switch
-                    checked={settings.modoManutencao}
-                    onCheckedChange={(checked) =>
-                      handleSettingChange("modoManutencao", checked)
-                    }
-                  />
-                </div>
-                <Separator className="bg-gray-800" />
-                <div className="space-y-2">
-                  <Label htmlFor="retencaoDados" className="text-gray-200">
-                    Retenção de Dados (dias)
-                  </Label>
-                  <Input
-                    id="retencaoDados"
-                    type="number"
-                    value={settings.retencaoDados}
-                    onChange={(e) =>
-                      handleSettingChange(
-                        "retencaoDados",
-                        Number.parseInt(e.target.value)
-                      )
-                    }
-                    className="bg-gray-800 border-gray-700 text-gray-200"
-                  />
-                  <p className="text-sm text-gray-400">
-                    Por quanto tempo manter dados históricos
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex gap-4">
-                <Button
-                  variant="outline"
-                  onClick={handleSystemRestart}
-                  className="border-gray-700 hover:bg-gray-800 text-gray-200"
-                >
-                  <RefreshCw className="h-4 w-4 mr-2" />
-                  Reiniciar whatsappbot
-                </Button>
-                <Button
-                  variant="outline"
-                  className="border-gray-700 hover:bg-gray-800 text-gray-200"
-                >
-                  <Database className="h-4 w-4 mr-2" />
-                  Otimizar Banco de Dados
-                </Button>
-              </div>
-            </CardContent> */}
           </Card>
         </TabsContent>
 
@@ -531,6 +882,11 @@ export default function SystemSettings() {
               <CardDescription className="text-gray-400">
                 WhatsAppbot Advanced Settings and Maintenance
               </CardDescription>
+              {error && (
+                <CardDescription className="text-red-400">
+                  {error}
+                </CardDescription>
+              )}
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-4">
@@ -603,6 +959,35 @@ export default function SystemSettings() {
                     </p>
                   </div>
                 )}
+
+                {whatsappbotConfig.running && !botConnected  && (
+                  <div className="w-full">
+                    <div
+                      className={`w-full flex justify-center border border-gray-800 rounded-md p-4 items-center`}
+                    >
+                      {qrCode?.qr ? (
+                        <Image
+                          src={qrCode?.qr}
+                          alt="WhatsApp Bot QrCode Image"
+                          width={500}
+                          height={500}
+                          priority
+                          className="w-1/3 aspect-square object-contain"
+                        />
+                      ) : (
+                        <p className="text-sm text-gray-400">
+                          Loading QR Code...
+                        </p>
+                      )}
+                    </div>
+
+                    <p className="text-sm text-gray-400">
+                      Scan QrCode to link to the WhatsApp. Refreshing QR in:{" "}
+                      {countdown}s (Attempt {attempts}/5)
+                      {countdown}s
+                    </p>
+                  </div>
+                )}
               </div>
 
               <div className="flex gap-4">
@@ -625,10 +1010,10 @@ export default function SystemSettings() {
                   variant="outline"
                   onClick={
                     whatsappbotConfig?.running
-                      ? stopWhatsappbot
-                      : startWhatsappbot
+                      ? stopBot
+                      : startBot
                   }
-                  className="border-gray-700 hover:bg-gray-800 text-gray-200"
+                  className="border-gray-700 cursor-pointer hover:bg-gray-800 text-gray-200"
                 >
                   <RefreshCw className="h-4 w-4 mr-2" />
                   {whatsappbotConfig?.running ? "Stop Bot" : "Start Bot"}
@@ -647,16 +1032,15 @@ export default function SystemSettings() {
                 Security Settings
               </CardTitle>
               <CardDescription className="text-gray-400">
-                Configure security and access controls
-              Configure security and access controls
+                Configure security and access controls Configure security and
+                access controls
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="timeoutSession" className="text-gray-200">
-                    Session Timeout (minutes)
-                  Session Timeout (minutes)
+                    Session Timeout (minutes) Session Timeout (minutes)
                   </Label>
                   <Input
                     id="timeoutSession"
@@ -675,7 +1059,7 @@ export default function SystemSettings() {
                 <div className="space-y-2">
                   <Label htmlFor="expiracaoSenha" className="text-gray-200">
                     {settings.expiracaoSenha} Password Expiration (days)
-                    </Label>
+                  </Label>
                   <Input
                     type="number"
                     value={settings.expiracaoSenha}
@@ -698,11 +1082,11 @@ export default function SystemSettings() {
                       Two-Factor Authentication
                     </Label>
                     <p className="text-sm text-gray-400">
-                      Require 2FA for all user accounts
-                    Two-Factor Authentication
+                      Require 2FA for all user accounts Two-Factor
+                      Authentication
                     </p>
                     <p className="text-sm text-gray-400">
-                    Require 2FA for all user accounts
+                      Require 2FA for all user accounts
                     </p>
                   </div>
                   <Switch
@@ -717,8 +1101,8 @@ export default function SystemSettings() {
                   <div>
                     <Label className="text-gray-200">Audit Log</Label>
                     <p className="text-sm text-gray-400">
-                      Log all user actions for security auditing
-                    Log all user actions for security auditing
+                      Log all user actions for security auditing Log all user
+                      actions for security auditing
                     </p>
                   </div>
                   <Switch
@@ -732,7 +1116,6 @@ export default function SystemSettings() {
             </CardContent>
           </Card>
         </TabsContent>
-
       </Tabs>
     </div>
   );
