@@ -3,7 +3,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
-import { getAdmin } from "@/lib/userActions";
+import { getAdmin, getAllInventorys } from "@/lib/userActions";
 import { SocketProvider } from "./SocketContext";
 
 const InventoryContext = createContext(null);
@@ -294,6 +294,18 @@ export function InventoryProvider({ children }) {
     verifyAdmin();
   }, []);
 
+  // Fetch all inventory data
+  const getInventory = async (page) => {
+    try {
+      const data = await getAllInventorys({page});
+      if (data?.success) {
+        setInventory([...inventory, data.data]);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   // Funções de conversão para Supabase
   const convertInventoryItem = (item) => ({
     id: item.id,
@@ -377,7 +389,7 @@ export function InventoryProvider({ children }) {
 
       if (!isSupabaseConfigured || !supabase) {
         // Usar dados simulados
-        setInventory(initialInventory);
+        // setInventory(initialInventory);
         setPurchaseOrders(initialPurchaseOrders);
         setNotifications(initialNotifications);
         setStockMovements([]);
@@ -439,6 +451,12 @@ export function InventoryProvider({ children }) {
   useEffect(() => {
     loadData();
   }, []);
+
+  useEffect(() => {
+    if (admin) {
+      getInventory();
+    }
+  }, [admin]);
 
   // Add new inventory item to the database
   const addInventoryItem = async (item) => {
