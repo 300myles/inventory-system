@@ -287,15 +287,12 @@ export function InventoryProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-<<<<<<< HEAD
   // admin authentication
   // useState(() => {
   //
   // }, [admin]);
 
   // Funções de conversão para Supabase
-=======
->>>>>>> 5a84c28 (update)
   const convertInventoryItem = (item) => ({
     id: item.id,
     name: item.name,
