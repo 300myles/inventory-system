@@ -438,7 +438,7 @@ export function InventoryProvider({ children }) {
     loadData();
   }, []);
 
-  // Funções CRUD - adaptadas para funcionar com ou sem Supabase
+  // Add new inventory item to the database
   const addInventoryItem = async (item) => {
     if (isSupabaseConfigured && supabase) {
       try {
@@ -468,6 +468,7 @@ export function InventoryProvider({ children }) {
           .single();
 
         if (error) throw error;
+       const response = await fetch("", )
 
         const newItem = convertInventoryItem(data);
         setInventory((prev) => [...prev, newItem]);

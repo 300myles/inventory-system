@@ -412,11 +412,15 @@ export default function UserAuthentication() {
         </Card>
 
         {/* Security Settings */}
+<<<<<<< HEAD
         <Card
           className={
             theme === "dark" ? "bg-gray-800 border-gray-700" : "bg-gray-50"
           }
         >
+=======
+        <Card className={theme === "dark" ? "bg-gray-800 border-gray-700" : "bg-gray-50"}>
+>>>>>>> 72b7e76f00be5a1ef56c08fb35bcd88afd34fd6f
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Settings className="h-5 w-5" />

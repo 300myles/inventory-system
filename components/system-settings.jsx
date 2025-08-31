@@ -648,6 +648,7 @@ export default function SystemSettings() {
               </CardTitle>
               <CardDescription className="text-gray-400">
                 Configure security and access controls
+              Configure security and access controls
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -655,11 +656,13 @@ export default function SystemSettings() {
                 <div className="space-y-2">
                   <Label htmlFor="timeoutSession" className="text-gray-200">
                     Session Timeout (minutes)
+                  Session Timeout (minutes)
                   </Label>
                   <Input
                     id="timeoutSession"
                     type="number"
                     value={settings.timeoutSession}
+                    minvalue={30}
                     onChange={(e) =>
                       handleSettingChange(
                         "timeoutSession",
@@ -672,11 +675,11 @@ export default function SystemSettings() {
                 <div className="space-y-2">
                   <Label htmlFor="expiracaoSenha" className="text-gray-200">
                     {settings.expiracaoSenha} Password Expiration (days)
-                  </Label>
+                    </Label>
                   <Input
-                    id="expiracaoSenha"
                     type="number"
                     value={settings.expiracaoSenha}
+                    minvalue={10}
                     onChange={(e) =>
                       handleSettingChange(
                         "expiracaoSenha",
@@ -696,6 +699,10 @@ export default function SystemSettings() {
                     </Label>
                     <p className="text-sm text-gray-400">
                       Require 2FA for all user accounts
+                    Two-Factor Authentication
+                    </p>
+                    <p className="text-sm text-gray-400">
+                    Require 2FA for all user accounts
                     </p>
                   </div>
                   <Switch
@@ -711,6 +718,7 @@ export default function SystemSettings() {
                     <Label className="text-gray-200">Audit Log</Label>
                     <p className="text-sm text-gray-400">
                       Log all user actions for security auditing
+                    Log all user actions for security auditing
                     </p>
                   </div>
                   <Switch
